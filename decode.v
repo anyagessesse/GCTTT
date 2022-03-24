@@ -3,7 +3,7 @@ module decode(PC, PCPlus2, inst, PCIn, RqRd, Rs, JumpOrBranchHigh, RqRdOrImm, Rs
       input [?:0]PC, PCPlus2; //pc size?
       input [11:0]inst;  //[15:3] of whole instruction
 
-      output [?:0]PCIn; //pc size?
+	output [?:0]PCOut; //pc size?
       output [31:0]RqRd, Rs;
 
 	    // control signals
