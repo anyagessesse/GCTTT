@@ -1,4 +1,4 @@
-module execute(PCIn,RqRd,Rs,instr,JumpHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOut,flush,RqRd,ALUOut);
+module execute(PCIn,RqRd,Rs,instr,JumpOrBrachHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOut,flush,RqRd,ALUOut);
 
 	input [?:0]PCIn;
 	input [31:0]RqRd; // first read data from registers
@@ -6,7 +6,7 @@ module execute(PCIn,RqRd,Rs,instr,JumpHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOut,flush
 	input [15:0]instr;
 	
 	// control signals
-	input JumpHigh;
+	input JumpOrBranchHigh;
 	input RqRdOrImm;
 	input RsOrImm;
 	input ALUCtrl;
