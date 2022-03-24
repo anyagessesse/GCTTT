@@ -2,7 +2,7 @@ module write(PC, ALURes, WriteDataIn, WriteRegIn, PCOut, WriteDataOut, WriteRegO
   
   input [?:0]PC;
   input [31:0]ALURes;
-  input [31:0]WriteDataIn;
+  input [31:0]MemReadDataIn;
   input [2:0]WriteRegIn;
   
   output [?:0]PCOut;
