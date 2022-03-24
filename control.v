@@ -1,4 +1,4 @@
-control (opcode, JumpOrBranchHigh, RqRqOrImm, RsOrImm, ALUCtrl);
+module control (opcode, JumpOrBranchHigh, RqRqOrImm, RsOrImm, ALUCtrl);
 
     input [3:0]opcode;
 
