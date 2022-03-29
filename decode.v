@@ -12,6 +12,8 @@ module decode(PC, PCPlus2, inst, PCOut, RdRq, Rs, write_en, JumpOrBranchHigh, Rq
       output RqRdOrImm;
       output RsOrImm;
       output ALUCtrl;
+      output MemWrite; //indicates if memory is being written to
+      output MemRead;  //indicates if memory is being read
 
       wire halt;
       wire [2:0]func_code;
@@ -22,8 +24,11 @@ module decode(PC, PCPlus2, inst, PCOut, RdRq, Rs, write_en, JumpOrBranchHigh, Rq
 
       // move to control file
       assign JumpOrBranchHigh = (inst[15:12] == 4'b0100) | (inst[15:12] == 4'b0010);  //1 = branch or jump, 0 = no branch or jump
-      assign RdRqOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111);
+      assign RdRqOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111); //1 = immediate, 0 = RdRq
       assign RsOrImm = inst[13]; //1 = use Rs, 0 = use imm
+      assign write_en = inst[15];
+      assign MemWrite = inst[15:12] == 4'b0111;
+      assign MemRead = inst[15:12] == 4'b1000;
 
       always @(*) begin
 	case (inst[15:12]) 
