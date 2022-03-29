@@ -18,6 +18,7 @@ module execute(PCIn,RqRd,Rs,instr,JumpOrBrachHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOu
 	
 	wire [31:0]A,B;
 	wire EQ,LT,GT,LE,GE,NE;
+	wire SelectJOrB;
 	
 	
 	// mux between ALU inputs
@@ -33,14 +34,12 @@ module execute(PCIn,RqRd,Rs,instr,JumpOrBrachHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOu
 	
 	
 	// branching logic
-	
+	jumpbranch JB0(.EQ(EQ),.LT(LT),.GT(GT),.LE(LE),.GE(GE),.NE(NE),.JumpOrBranchHigh(JumpOrBranchHigh),.instr(instr),.SelectJOrB(SelectJOrB),.flush(flush));
 	
 	// mux for new PC value if branching
-	
+	assign PCOut = SelectJOrB ? RqRd : PCIn;
 	
 	// forwarding unit (in the future)
 	
-
-
 
 endmodule
