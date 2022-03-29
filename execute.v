@@ -14,7 +14,6 @@ module execute(PCIn,RqRd,Rs,instr,JumpOrBrachHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOu
 
 	output [12:0]PCOut;  //PC after branch logic
 	output flush;   //if we need to branch and flush previous steps
-	output [31:0]RqRd;
 	output [31:0]ALUOut;
 	
 	
