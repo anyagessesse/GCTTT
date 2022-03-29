@@ -7,4 +7,67 @@ z2
 !i10e 25
 !i10f 100
 cModel Technology
-d/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT
+Z0 d/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT
+valu
+!s110 1648590288
+!i10b 1
+!s100 Lg6OTlJPIXK;V:SG`Nmg`0
+IdIc<=<lJcb6@D37T]7aP^0
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1648590283
+8/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/alu.v
+F/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/alu.v
+L0 1
+Z2 OP;L;10.7c;67
+r1
+!s85 0
+31
+!s108 1648590288.000000
+!s107 /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/alu.v|
+!s90 -reportprogress|300|-work|work|-stats=none|/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/alu.v|
+!i113 1
+Z3 o-work work
+Z4 tCvgOpt 0
+vcondcodes
+Z5 !s110 1648590064
+!i10b 1
+!s100 WkU1R<72QeN80Rg3LX7dM3
+IiV85;mC6FBB0V439@mHT]1
+R1
+R0
+w1648138584
+8/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/condcodes.v
+F/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/condcodes.v
+L0 1
+R2
+r1
+!s85 0
+31
+Z6 !s108 1648590064.000000
+!s107 /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/condcodes.v|
+!s90 -reportprogress|300|-work|work|-stats=none|/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/condcodes.v|
+!i113 1
+R3
+R4
+vdff
+R5
+!i10b 1
+!s100 P`1ml<?H6Lj3aoeN:>@C80
+I5T_^`?=o^hdbfLA4Z4oOP2
+R1
+R0
+w1648080085
+8/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/dff.v
+F/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/dff.v
+L0 1
+R2
+r1
+!s85 0
+31
+R6
+!s107 /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/dff.v|
+!s90 -reportprogress|300|-work|work|-stats=none|/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/dff.v|
+!i113 1
+R3
+R4
