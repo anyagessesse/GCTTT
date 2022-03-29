@@ -1,0 +1,59 @@
+/afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v {0 {vlog -work work -stats=none /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v
+Model Technology ModelSim DE vlog 10.7c Compiler 2018.08 Aug 17 2018
+-- Compiling module fetch
+** Error: (vlog-13069) /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v(6): near "?": syntax error, unexpected '?'.
+** Error: (vlog-13069) /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v(9): near "?": syntax error, unexpected '?'.
+** Error: (vlog-13069) /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v(10): near "?": syntax error, unexpected '?'.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v(1): (vlog-2730) Undefined variable: 'newPC'.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v(1): (vlog-13294) Identifier must be declared with a port mode: newPC.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v(1): (vlog-2730) Undefined variable: 'PC'.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v(1): (vlog-13294) Identifier must be declared with a port mode: PC.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v(1): (vlog-2730) Undefined variable: 'PCPlus2'.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/fetch.v(1): (vlog-13294) Identifier must be declared with a port mode: PCPlus2.
+
+} {4.0 13.0} {}} /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/condcodes.v {1 {vlog -work work -stats=none /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/condcodes.v
+Model Technology ModelSim DE vlog 10.7c Compiler 2018.08 Aug 17 2018
+-- Compiling module condcodes
+
+Top level modules:
+	condcodes
+
+} {} {}} /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/execute.v {0 {vlog -work work -stats=none /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/execute.v
+Model Technology ModelSim DE vlog 10.7c Compiler 2018.08 Aug 17 2018
+-- Compiling module execute
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/execute.v(17): 'RqRd' already declared in this scope (execute) with a conflicting port direction.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/execute.v(1): (vlog-2730) Undefined variable: 'JumpOrBrachHigh'.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/execute.v(1): (vlog-13294) Identifier must be declared with a port mode: JumpOrBrachHigh.
+
+} {4.0 7.0} {}} /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/proc.v {1 {vlog -work work -stats=none /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/proc.v
+Model Technology ModelSim DE vlog 10.7c Compiler 2018.08 Aug 17 2018
+
+} {} {}} /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/dff.v {1 {vlog -work work -stats=none /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/dff.v
+Model Technology ModelSim DE vlog 10.7c Compiler 2018.08 Aug 17 2018
+-- Compiling module dff
+
+Top level modules:
+	dff
+
+} {} {}} /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/alu.v {1 {vlog -work work -stats=none /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/alu.v
+Model Technology ModelSim DE vlog 10.7c Compiler 2018.08 Aug 17 2018
+-- Compiling module alu
+
+Top level modules:
+	alu
+
+} {} {}} /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v {0 {vlog -work work -stats=none /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v
+Model Technology ModelSim DE vlog 10.7c Compiler 2018.08 Aug 17 2018
+-- Compiling module jumpbranch
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(3): In, out, or inout does not appear in port list: EQ.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(4): In, out, or inout does not appear in port list: LT.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(5): In, out, or inout does not appear in port list: GT.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(6): In, out, or inout does not appear in port list: LE.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(7): In, out, or inout does not appear in port list: GE.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(8): In, out, or inout does not appear in port list: NE.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(9): In, out, or inout does not appear in port list: JumpOrBranchHigh.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(10): In, out, or inout does not appear in port list: instr.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(12): In, out, or inout does not appear in port list: SelectJOrB.
+** Error: /afs/cs.wisc.edu/u/a/n/anya/Desktop/GCTTT/jumpbranch.v(13): In, out, or inout does not appear in port list: flush.
+
+} {4.0 14.0} {}}
