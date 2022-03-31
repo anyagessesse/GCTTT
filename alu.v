@@ -46,7 +46,7 @@ module alu(A, B, ALUCtrl, Out);
 			(ALUCtrl == 4'b0001) ? mv1 :
 			(ALUCtrl == 4'b0010) ? mv2 :
 			(ALUCtrl == 4'b0011) ? mv3 :
-			(ALUCtrl == 4'b0111) ? shra :
+			(ALUCtrl == 4'b0100) ? shra :
 			(ALUCtrl == 4'b0101) ? shrl :
 			(ALUCtrl == 4'b0110) ? ror :
 			(ALUCtrl == 4'b0111) ? shl :
