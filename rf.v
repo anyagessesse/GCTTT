@@ -1,4 +1,4 @@
-module registers(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1_data, read2_data);
+module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1_data, read2_data);
   
   input [2:0]read1_reg, read2_reg, write_reg;
   input [31:0]write_data;
@@ -29,8 +29,18 @@ module registers(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en
   
 
   //write data
-  always @(posedge clk) begin   
-	if (write_en) begin
+  always @(posedge clk or posedge rst) begin   
+  	if (rst) begin
+		reg0 <= 0;
+		reg1 <= 0;
+		reg2 <= 0;
+		reg3 <= 0;
+		reg4 <= 0;
+		reg5 <= 0;
+		reg6 <= 0;
+		special <= 0;
+	end
+	else if (write_en) begin
         	case (write_reg) 
 			3'b000: reg0 <= write_data;
 			3'b001: reg1 <= write_data;
@@ -39,7 +49,7 @@ module registers(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en
 			3'b100: reg4 <= write_data;
 			3'b101: reg5 <= write_data;
 			3'b110: reg6 <= write_data;
-			default: special <= write_data;
+			3'b111: special <= write_data;
 		endcase
 	end
   end 

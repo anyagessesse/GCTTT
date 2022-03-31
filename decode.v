@@ -1,26 +1,26 @@
-module decode(PC, PCPlus2, inst, PCOut, RdRq, Rs, write_en, JumpOrBranchHigh, RqRdOrImm, RsOrImm, ALUCtrl);
+module decode(PC, PCPlus1, inst, PCOut, inst_out, RdRq, Rs, write_en, write_reg,
+		JumpOrBranchHigh, RqRdOrImm, RsOrImm, ALUCtrl,
+		MemWrite, MemRead);
 
-      input [12:0]PC, PCPlus2; //pc size?
+      input [12:0]PC, PCPlus1; 
       input [15:0]inst;  
 
-      output [12:0]PCOut; //pc size?
-      output [2:0]RdRq, Rs;  //go to register file
-      output write_en;  //pass through stages for write back
-
+      output [12:0]PCOut; 
+      output [15:0]inst_out;
+      output [2:0]RdRq, Rs, write_reg;  //go to register file and wb
+      output write_en;  //goes to write back
+    
       // control signals
       output JumpOrBranchHigh;
       output RqRdOrImm;
       output RsOrImm;
       output ALUCtrl;
-      output MemWrite; //indicates if memory is being written to
-      output MemRead;  //indicates if memory is being read
+      output MemWrite; //indicates if memory is being written to, goes to mem phase
+      output MemRead;  //indicates if memory is being read, goes to mem phase
 
       wire halt;
       wire [2:0]func_code;
       reg [3:0]ALUIn;
-
-      //control unit
-      control(inst[15:12], JumpOrBranchHigh, RqRdOrImm, RsOrImm, ALUCtrl);
 
       // move to control file
       assign JumpOrBranchHigh = (inst[15:12] == 4'b0100) | (inst[15:12] == 4'b0010);  //1 = branch or jump, 0 = no branch or jump
@@ -29,6 +29,8 @@ module decode(PC, PCPlus2, inst, PCOut, RdRq, Rs, write_en, JumpOrBranchHigh, Rq
       assign write_en = inst[15];
       assign MemWrite = inst[15:12] == 4'b0111;
       assign MemRead = inst[15:12] == 4'b1000;
+      assign inst_out = inst;
+      assign write_reg = inst[11:9];
 
       always @(*) begin
 	case (inst[15:12]) 
@@ -44,7 +46,7 @@ module decode(PC, PCPlus2, inst, PCOut, RdRq, Rs, write_en, JumpOrBranchHigh, Rq
       assign ALUCtrl = ALUIn;		
   
       //pc select, keep same PC if halt is high
-      assign PCOut = (inst[15:12] == 4'b0000) ? PC : PCPlus2;
+      assign PCOut = (inst[15:12] == 4'b0000) ? PC : PCPlus1;
 
       // select rd or rq register, pass register numbers to rf
       assign RdRq = inst[14] ? inst[11:9] : inst[5:3];
