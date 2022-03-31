@@ -3,11 +3,11 @@ module fetch(clk, rst,newPC,instr,PC,PCPlus1);
 
 	input clk;
 	input rst;
-	input [12:0]newPC; //what is the size of the PC?
+	input [15:0]newPC; //what is the size of the PC?
 	
 	output [15:0]instr;
-	output [12:0]PC;
-	output [12:0]PCPlus1;
+	output [15:0]PC;
+	output [15:0]PCPlus1;
 
 
 

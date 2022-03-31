@@ -1,14 +1,14 @@
 module write(PC, ALURes, MemReadDataIn, WriteRegIn, write_en, MemRead, PCNew, 
 		WriteDataOut, WriteRegOut, write_en_out);
   
-  input [12:0]PC;
+  input [15:0]PC;
   input [31:0]ALURes;
   input [31:0]MemReadDataIn;
   input [2:0]WriteRegIn;
   input write_en;  // write enable to registers ??
   input MemRead; // signal to determine if memory data needs to be written to register
   
-  output [12:0]PCNew;
+  output [15:0]PCNew;
   output [31:0]WriteDataOut;
   output [2:0]WriteRegOut;
   output write_en_out;

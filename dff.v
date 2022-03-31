@@ -1,11 +1,11 @@
 module dff (q, d, clk, rst);
 
-    output         q;
-    input          d;
+    output         [15:0]q;
+    input          [15:0]d;
     input          clk;
     input          rst;
 
-    reg            state;
+    reg            [15:0]state;
 
     assign #(1) q = state;
 
