@@ -10,6 +10,7 @@ module alu(A, B, ALUCtrl, Out);
 	wire [31:0]shra,shrl,ror,shl,rol;
 	wire [31:0]notOut,xorOut,orOut,andOut;
 	wire [31:0]subOut,addOut;
+	wire [63:0]rolTemp;
 	
 	
 	// move instructions
@@ -26,7 +27,10 @@ module alu(A, B, ALUCtrl, Out);
 	
 	// rotates
 	assign ror = {B,B} >> A[4:0];
-	assign rol = {B,B} << A[4:0];
+	
+	assign rolTemp = {B,B} << A[4:0];
+	
+	assign rol = rolTemp[63:32];
 	
 	
 	// simple bit operations
