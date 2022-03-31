@@ -112,7 +112,7 @@ module proc_hier_pbench();
             $fclose(trace_file);
             $fclose(sim_log_file);
 	    #5;
-            $finish;
+            $stop;
          end 
       end
       
@@ -127,33 +127,33 @@ module proc_hier_pbench();
    // Edit the example below. You must change the signal
    // names on the right hand side
     
-   assign PC = DUT.p0.IFIDd[47:32];
-   assign Inst = DUT.p0.instr;
+   assign PC = DUT.p0.PCNew;
+   assign Inst = DUT.p0.inst_fetch;
    
-   assign RegWrite = DUT.p0.MEMWBq[71];
+   assign RegWrite = DUT.p0.write_en;
    // Is register file being written to, one bit signal (1 means yes, 0 means no)
    //    
-   assign WriteRegister = DUT.p0.MEMWBq[70:68];
+   assign WriteRegister = DUT.p0.write_reg;
    // The name of the register being written to. (3 bit signal)
    
-   assign WriteData = DUT.p0.RdData;
+   assign WriteData = DUT.p0.WriteData;
    // Data being written to the register. (16 bits)
    
-   assign MemRead =  DUT.p0.EXMEMq[83];
+   assign MemRead =  DUT.p0.MemRead;
 	//(DUT.p0.memRxout & ~DUT.p0.notdonem);
    // Is memory being read, one bit signal (1 means yes, 0 means no)
    
-   assign MemWrite = DUT.p0.EXMEMq[39];
+   assign MemWrite = DUT.p0.MemWrite;
 	//(DUT.p0.memWxout & ~DUT.p0.notdonem);
    // Is memory being written to (1 bit signal)
    
-   assign MemAddress = DUT.p0.EXMEMq[37:22];
+   assign MemAddress = DUT.p0.ALUOut;
    // Address to access memory with (for both reads and writes to memory, 16 bits)
    
-   assign MemDataIn = DUT.p0.EXMEMq[55:40];
+   assign MemDataIn = DUT.p0.DataOut[55:40];
    // Data to be written to memory for memory writes (16 bits)
    
-   assign MemDataOut = DUT.p0.MEMWBd[16:1];
+   assign MemDataOut = DUT.p0.DataOut_mem;
    // Data read from memory for memory reads (16 bits)
 
    // new added 05/03
@@ -173,7 +173,7 @@ module proc_hier_pbench();
    // Signal indicating a valid data cache hit
    // Above assignment is a dummy example
    
-   assign Halt = DUT.p0.MEMWBq[51];
+   assign Halt = DUT.p0.halt;
    // Processor halted
    
    

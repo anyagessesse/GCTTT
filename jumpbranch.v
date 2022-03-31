@@ -7,7 +7,7 @@ module jumpbranch(EQ,LT,GT,LE,GE,NE,JumpOrBranchHigh,instr,SelectJOrB,flush);
 	input GE;
 	input NE;
 	input JumpOrBranchHigh;
-	input instr;
+	input [15:0]instr;
 	
 	output SelectJOrB;
 	output flush;

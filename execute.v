@@ -1,4 +1,4 @@
-module execute(PCIn,RqRd,Rs,instr,JumpOrBrachHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOut,flush,RqRd,ALUOut);
+module execute(PCIn,RqRd,Rs,instr,JumpOrBranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOut,flush,RqRd,ALUOut);
 
 	input [12:0]PCIn;
 	input [31:0]RqRd; // first read data from registers

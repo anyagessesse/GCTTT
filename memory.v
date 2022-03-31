@@ -18,7 +18,7 @@ module memory(PC, flush, RdRq, ALURes, Mem_Write,
     assign ALUOut = ALURes;
 
     //memory stuff here :) use WriteDataIn, ALURes, Mem_Write
-    memory2c MEM0(.data_out(readData), .data_in(writeData), .addr(address), .enable(1'b1), .wr(MemWrite), .createdump(1'b0), .clk(clk), .rst(rst));
+    memory2c MEM0(.data_out(ReadDataOut), .data_in(RdRq), .addr(ALURes), .enable(1'b1), .wr(MemWrite), .createdump(1'b0), .clk(clk), .rst(rst));
 
   
 endmodule

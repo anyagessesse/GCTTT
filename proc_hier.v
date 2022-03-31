@@ -19,8 +19,6 @@ module proc_hier();
              .err                       (err));
    
    proc p0(/*AUTOINST*/
-           // Outputs
-           .err                         (err),
            // Inputs
            .clk                         (clk),
            .rst                         (rst));   

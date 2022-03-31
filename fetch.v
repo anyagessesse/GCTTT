@@ -1,4 +1,4 @@
-module fetch(newPC,instr,PC,PCPlus1);
+module fetch(clk, rst,newPC,instr,PC,PCPlus1);
 
 
 	input clk;

@@ -2,25 +2,35 @@ module proc(clk,rst);
 
 input clk, rst;
 
+//signals
+wire clk, rst;
+wire [12:0]PCNew, PC, PCPlus1, PC_fetch, PC_id, PC_ex;
+wire [15:0]instr, inst_fetch, inst_id;
+wire JumpOrBranchHigh, RqRdOrImm, RsOrImm, MemWrite, MemRead, write_en;
+wire [3:0] ALUCtrl;
+wire [2:0]write_reg, RqRd, Rs;
+wire flush, halt;
+wire [31:0]reg1_data, reg2_data, ALUOut, ALUOut_mem;
+
 //instantiate modules
 /*
  * FETCH
  * inputs: clk, rst, newPC
  * outputs: inst_fetch, PC_fetch, PCPlus1
  */
-fetch FETCH0(clk,rst,newPC,instr,PC,PCPlus1);
+fetch FETCH0(clk,rst,PCNew,inst_fetch,PC,PCPlus1);
 /* 
  * DECODE
  * inputs: PC_fetch, PCPlus1, inst_fetch
- * ouputs: 
+ * ouputs: halt
  *     -to EX: PC_id, JumpOrBranchHigh, RqRdOrImm, RsOrImm, ALUCtrl, inst_id
  *     -to MEM: MemWrite, MemRead
  *     -to WB: write_en, write_reg
- *     -to rf: RqRd, Rs
+ *     -to rf: RqRd, Rs  
  */
 decode ID0(PC_fetch,PCPlus1,inst_fetch,PC_id,inst_id,RqRd,Rs,write_en,
                 write_reg, JumpOrBranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,
-		MemWrite,MemRead);
+		MemWrite,MemRead,halt);
 /*
  * EXECUTE
  * inputs: PC_id, reg1_data, reg2_data, inst_id, JumpOrBranchHigh,
@@ -40,9 +50,9 @@ memory MEM0(PC, flush, req1_out, ALUOut, MemWrite,
 		ALUOut_mem, DataOut_mem);
 /* WRITEBACK
  * inputs: PC_ex, ALUOut_mem, write_reg, write_en, MemRead, DataOut
- * outputs: PCnew, WriteData, WriteReg, write_en_out
+ * outputs: PCNew, WriteData, WriteReg, write_en_out
  */
-write WB0(PC_ex,ALUOut_mem, DataOut, write_reg, MemRead, PCnew, 
+write WB0(PC_ex,ALUOut_mem, DataOut, write_reg, MemRead, PCNew, 
 		WriteData, WriteReg, write_en_out);
 
 //regsiters

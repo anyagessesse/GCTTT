@@ -1,6 +1,6 @@
 module decode(PC, PCPlus1, inst, PCOut, inst_out, RdRq, Rs, write_en, write_reg,
 		JumpOrBranchHigh, RqRdOrImm, RsOrImm, ALUCtrl,
-		MemWrite, MemRead);
+		MemWrite, MemRead, halt);
 
       input [12:0]PC, PCPlus1; 
       input [15:0]inst;  
@@ -8,7 +8,7 @@ module decode(PC, PCPlus1, inst, PCOut, inst_out, RdRq, Rs, write_en, write_reg,
       output [12:0]PCOut; 
       output [15:0]inst_out;
       output [2:0]RdRq, Rs, write_reg;  //go to register file and wb
-      output write_en;  //goes to write back
+      output write_en, halt;  //goes to write back
     
       // control signals
       output JumpOrBranchHigh;
@@ -18,11 +18,11 @@ module decode(PC, PCPlus1, inst, PCOut, inst_out, RdRq, Rs, write_en, write_reg,
       output MemWrite; //indicates if memory is being written to, goes to mem phase
       output MemRead;  //indicates if memory is being read, goes to mem phase
 
-      wire halt;
       wire [2:0]func_code;
       reg [3:0]ALUIn;
 
       // move to control file
+      assign halt = inst[15:12] == 4'b0001;
       assign JumpOrBranchHigh = (inst[15:12] == 4'b0100) | (inst[15:12] == 4'b0010);  //1 = branch or jump, 0 = no branch or jump
       assign RdRqOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111); //1 = immediate, 0 = RdRq
       assign RsOrImm = inst[13]; //1 = use Rs, 0 = use imm
