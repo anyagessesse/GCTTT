@@ -13,10 +13,10 @@ module alu(A, B, ALUCtrl, Out);
 	
 	
 	// move instructions
-	assign mv0 = {B[7:0],A[23:0]};
-	assign mv1 = {A[31:24],B[7:0],A[15:0]};
-	assign mv2 = {A[31:16],B[7:0],A[7:0]};
-	assign mv3 = {A[31:8],B[7:0]};
+	assign mv3 = {B[7:0],A[23:0]};
+	assign mv2 = {A[31:24],B[7:0],A[15:0]};
+	assign mv1 = {A[31:16],B[7:0],A[7:0]};
+	assign mv0 = {A[31:8],B[7:0]};
 	
 	
 	// shifts
