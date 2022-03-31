@@ -21,6 +21,25 @@ output 	[9:0]	oFT_X;
 output	[9:0]	oFT_Y;
 output			oDVAL;
 
-// code starts from here
+//Internel Signals 
+reg [14:0] min_x;
+reg [14:0] y_of_minx;
+localparam SCREEN_WIDTH = 14'd640;
+localparam SCREEN_HEIGHT = 14'd480;
+
+always @(posedge iCLK, negedge iRST) begin
+    if (iDCLEAN == 1'b1 && iDVAL == 1'b1) begin// skin
+        // store the current minimum x of the skin pixels
+        if (iX_Cont[15:1] < min_x) begin
+            min_x = iX_Cont[15:1];
+            y_of_minx = iY_Cont[15:1];
+        end
+    end
+end
+
+// determine if the fingertip is found for the current frame 
+assign oDVAL = (iX_Cont[15:1] == SCREEN_WIDTH && iY_Cont[15:1] == SCREEN_HEIGHT) ? 1'b1: 1'b0;
+assign oFT_X = oDVAL ? min_x[9:0] : 0;
+assign oFT_Y = oDVAL ? y_of_minx[9:0] : 0;
 
 endmodule

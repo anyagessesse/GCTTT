@@ -19,6 +19,16 @@ input			iFrame_En;
 output 	    	oDCLEAN;
 output			oDVAL;
 
-// code starts from here
+//internel Signals
+//temporary trying without using filter
+assign oDVAL = iDVAL;
+assign oDCLEAN = iBinary;
+
+//Step1: Opening
+//	1.1: Erosion
+//	1.2: Dilation
+//Step2: Closing
+//	2.1: Dilation
+//	2.2: Erosion
 
 endmodule

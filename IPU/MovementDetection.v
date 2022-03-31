@@ -19,4 +19,5 @@ output			oStable_hand;
 
 // code starts from here
 
+//State Machines
 endmodule
