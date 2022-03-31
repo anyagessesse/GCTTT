@@ -18,7 +18,7 @@ module fetch(newPC,instr,PC,PCPlus1);
 	assign PCPlus1 = PC + 1;
 	
 	// fetch instruction from memory (how will memory work for instructions?)
-	
+	memory2c MEM0(.data_out(instr), .data_in(16'h0000), .addr(PC), .enable(1'b1), .wr(1'b0), .createdump(1'b0), .clk(clk), .rst(rst));
 
 
 endmodule
