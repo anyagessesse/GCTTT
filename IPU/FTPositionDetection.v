@@ -27,7 +27,7 @@ reg [14:0] y_of_minx;
 localparam SCREEN_WIDTH = 14'd640;
 localparam SCREEN_HEIGHT = 14'd480;
 
-always @(posedge iCLK, negedge iRST) begin
+always @(posedge iCLK, posedge iRST) begin
     if (iDCLEAN == 1'b1 && iDVAL == 1'b1) begin// skin
         // store the current minimum x of the skin pixels
         if (iX_Cont[15:1] < min_x) begin

@@ -39,9 +39,9 @@ Line_Buffer1 	u0	(	.clken(iDVAL),
 						.taps0x(mDATA_1),
 						.taps1x(mDATA_0)	);
 
-always@(posedge iCLK or negedge iRST)
+always@(posedge iCLK or posedge iRST)
 begin
-	if(!iRST)
+	if(iRST)
 	begin
 		mCCD_G	<=	0;
 		mDATAd_0<=	0;
@@ -58,7 +58,7 @@ begin
 end
 
 // Second Step: Convert the Gray Scaled image to be in Binary
-always @(posedge iCLK, negedge iRST) begin
+always @(posedge iCLK, posedge iRST) begin
 	if (oGrey >= 8'd205 && oGrey <= 8'd255) mBinary = 1'b0; // background color
 	else mBinary = 1'b1; // skin color
 end
