@@ -59,7 +59,8 @@ end
 
 // Second Step: Convert the Gray Scaled image to be in Binary
 always @(posedge iCLK, posedge iRST) begin
-	if (oGrey >= 8'd205 && oGrey <= 8'd255) mBinary = 1'b0; // background color
+	if (iRST) mBinary = 1'b0;
+	else if (oGrey >= 8'd205 && oGrey <= 8'd255) mBinary = 1'b0; // background color
 	else mBinary = 1'b1; // skin color
 end
 
