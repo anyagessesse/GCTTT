@@ -1,14 +1,14 @@
-module decode(PC, PCPlus1, inst, PCOut, inst_out, RdRq, Rs, write_en, write_reg,
-		JumpOrBranchHigh, RqRdOrImm, RsOrImm, ALUCtrl,
-		MemWrite, MemRead, halt);
+module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, JumpOrBranchHigh,
+		 RqRdOrImm, RsOrImm, ALUCtrl, MemWrite, MemRead, halt,
+		 reg1_data, reg2_data, write_reg, write_en);
 
       input [15:0]PC, PCPlus1; 
       input [15:0]inst;  
+      input clk, rst;
 
       output [15:0]PCOut; 
       output [15:0]inst_out;
-      output [2:0]RdRq, Rs, write_reg;  //go to register file and wb
-      output write_en, halt;  //goes to write back
+      output halt;  //goes to write back
     
       // control signals
       output JumpOrBranchHigh;
@@ -17,20 +17,27 @@ module decode(PC, PCPlus1, inst, PCOut, inst_out, RdRq, Rs, write_en, write_reg,
       output [3:0]ALUCtrl;
       output MemWrite; //indicates if memory is being written to, goes to mem phase
       output MemRead;  //indicates if memory is being read, goes to mem phase
+      output [31:0]reg1_data, reg2_data;
+      output [2:0]write_reg;
+      output write_en;
 
-      wire [2:0]func_code;
       reg [3:0]ALUIn;
+      wire [2:0]RdRq, Rs;
 
       // move to control file
       assign halt = inst[15:12] == 4'b0001;
       assign JumpOrBranchHigh = (inst[15:12] == 4'b0100) | (inst[15:12] == 4'b0010);  //1 = branch or jump, 0 = no branch or jump
-      assign RdRqOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111); //1 = immediate, 0 = RdRq
+      assign RqRdOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111); //1 = immediate, 0 = RdRq
       assign RsOrImm = inst[13]; //1 = use Rs, 0 = use imm
       assign write_en = inst[15];
       assign MemWrite = inst[15:12] == 4'b0111;
       assign MemRead = inst[15:12] == 4'b1000;
       assign inst_out = inst;
       assign write_reg = inst[11:9];
+
+      rf RF0(.clk(clk), .rst(rst), .read1_reg(RdRq), .read2_reg(Rs), 
+	     .write_reg(3'b000), .write_data(32'h00000000), .write_en(1'b0), 
+	     .read1_data(reg1_data), .read2_data(reg2_data));
 
       always @(*) begin
 	case (inst[15:12]) 
@@ -40,6 +47,7 @@ module decode(PC, PCPlus1, inst, PCOut, inst_out, RdRq, Rs, write_en, write_reg,
 		4'b1111: ALUIn <= 4'b0011;
 		4'b1011: ALUIn <= (|inst[2:0] ? {1'b0, inst[2:0]} : 4'b1000);
 		4'b1010: ALUIn <= {1'b1, inst[2:0]};
+		default: ALUIn <= 4'b1111;
 	endcase
       end 
 

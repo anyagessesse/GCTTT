@@ -8,7 +8,7 @@ module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1
   
  
   // registers
-  reg [31:0] reg0, reg1, reg2, reg3, reg4, reg5, reg6, special;
+  reg [31:0] reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7;
 
   // read data
   assign read1_data = read1_reg == 3'b000 ? reg0 :
@@ -17,7 +17,7 @@ module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1
                       read1_reg == 3'b011 ? reg3 :
                       read1_reg == 3'b100 ? reg4 :
                       read1_reg == 3'b101 ? reg5 :
-                      read1_reg == 3'b110 ? reg6 : special;
+                      read1_reg == 3'b110 ? reg6 : reg7;
 
   assign read2_data = read2_reg == 3'b000 ? reg0 :
 		      read2_reg == 3'b001 ? reg1 :
@@ -25,11 +25,11 @@ module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1
                       read2_reg == 3'b011 ? reg3 :
                       read2_reg == 3'b100 ? reg4 :
                       read2_reg == 3'b101 ? reg5 :
-                      read2_reg == 3'b110 ? reg6 : special;
+                      read2_reg == 3'b110 ? reg6 : reg7;
   
 
   //write data
-  always @(posedge clk or posedge rst) begin   
+  always @(posedge clk, posedge rst) begin   
   	if (rst) begin
 		reg0 <= 0;
 		reg1 <= 0;
@@ -38,7 +38,7 @@ module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1
 		reg4 <= 0;
 		reg5 <= 0;
 		reg6 <= 0;
-		special <= 0;
+		reg7 <= 0;
 	end
 	else if (write_en) begin
         	case (write_reg) 
@@ -49,7 +49,7 @@ module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1
 			3'b100: reg4 <= write_data;
 			3'b101: reg5 <= write_data;
 			3'b110: reg6 <= write_data;
-			3'b111: special <= write_data;
+			3'b111: reg7 <= write_data;
 		endcase
 	end
   end 

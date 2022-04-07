@@ -12,7 +12,7 @@ module fetch(clk, rst,newPC,instr,PC,PCPlus1);
 
 
 	// dff to hold PC value
-	dff DFF0(.q(PC), .d(newPC), .clk(clk), .rst(rst));
+	dff DFF0[15:0](.q(PC), .d(newPC), .clk(clk), .rst(rst));
 	
 	// adder to increment the PC (what value to increment by?)
 	assign PCPlus1 = PC + 1;
