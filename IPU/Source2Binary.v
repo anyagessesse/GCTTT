@@ -20,7 +20,7 @@ output 	    	oBinary;
 output			oDVAL;
 
 //Internel Signals 
-reg	    [11:0]	oGrey;
+wire	    [11:0]	oGrey;
 wire	[11:0]	mDATA_0;
 wire	[11:0]	mDATA_1;
 reg		[11:0]	mDATAd_0;
