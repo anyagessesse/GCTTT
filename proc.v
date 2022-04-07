@@ -73,7 +73,7 @@ dff DFF15(.q(EX_write_en), .d(DEC_write_en), .clk(clk), .rst(rst));
  *         ALUCtrl
  * outputs: PC_ex, flush, reg1_out, ALUOut
  */
-execute EX0(.PCIn(EX_PC_in),.RqRd(DEC_reg1_data),.Rs(DEC_reg2_data),
+execute EX0(.PCIn(EX_PC_in),.RqRd(EX_reg1_data),.Rs(EX_reg2_data),
 		.instr(EX_inst_in),.JumpOrBranchHigh(EX_JumpOrBranchHigh),
 		.RqRdOrImm(EX_RqRdOrImm),.RsOrImm(EX_RsOrImm),.ALUCtrl(EX_ALUCtrl),
 		.PCOut(EX_PC_out),.flush(EX_flush),.ALUOut(EX_ALU_out),.SelectJOrB(selectJorB));
