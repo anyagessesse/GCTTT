@@ -25,7 +25,7 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, JumpOrBranchHigh,
       wire [2:0]RdRq, Rs;
 
       // move to control file
-      assign halt = inst[15:12] == 4'b0001;
+      assign halt = (inst[15:12] == 4'b0000) & !rst;
       assign JumpOrBranchHigh = (inst[15:12] == 4'b0100) | (inst[15:12] == 4'b0010);  //1 = branch or jump, 0 = no branch or jump
       assign RqRdOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111); //1 = immediate, 0 = RdRq
       assign RsOrImm = inst[13]; //1 = use Rs, 0 = use imm

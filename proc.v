@@ -3,7 +3,6 @@ module proc(clk,rst);
 input clk, rst;
 
 //signals
-wire clk, rst;
 wire [15:0]FETCH_PC_in, FETCH_PC_out, DEC_PC_in, DEC_PC_out, EX_PC_in, 
 	EX_PC_out, MEM_PC_in, MEM_PC_out, WB_PC_in, WB_PC_out;
 wire [15:0]FETCH_PCPlus1, DEC_PCPlus1;
@@ -14,13 +13,14 @@ wire DEC_RsOrImm, EX_RsOrImm;
 wire [3:0]DEC_ALUCtrl, EX_ALUCtrl;
 wire DEC_MemWrite, EX_MemWrite, MEM_MemWrite;
 wire DEC_MemRead, EX_MemRead, MEM_MemRead, WB_MemRead;
-wire DEC_halt, EX_halt;
+wire DEC_halt, EX_halt, MEM_halt, WB_halt;
 wire [31:0]DEC_reg1_data, EX_reg1_data, MEM_reg1_data;
 wire [31:0]DEC_reg2_data, EX_reg2_data, MEM_reg2_data;
 wire [2:0]DEC_write_reg, EX_write_reg, MEM_write_reg, WB_write_reg;
 wire DEC_write_en, EX_write_en, MEM_write_en, WB_write_en;
 wire [31:0]EX_ALU_out, MEM_ALU_in, MEM_ALU_out, WB_ALU_in;
 wire [31:0]MEM_MemData, WB_MemData;
+wire [15:0]fd_inst;
 
 
 //instantiate modules
@@ -32,7 +32,8 @@ wire [31:0]MEM_MemData, WB_MemData;
 fetch FETCH0(.clk(clk),.rst(rst),.newPC(FETCH_PC_in),.instr(FETCH_inst),.PC(FETCH_PC_out),.PCPlus1(FETCH_PCPlus1));
 
 dff DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst));
-dff DFF1[15:0](.q(DEC_inst_in), .d(FETCH_inst), .clk(clk), .rst(rst));
+assign fd_inst = rst ? 16'h1000 : FETCH_inst;
+dff DFF1[15:0](.q(DEC_inst_in), .d(fd_inst), .clk(clk), .rst(1'b0));
 dff DFF2[15:0](.q(DEC_PCPlus1), .d(FETCH_PCPlus1), .clk(clk), .rst(rst));
 
 /* 
@@ -85,6 +86,7 @@ dff DFF21[31:0](.q(MEM_reg1_data), .d(EX_reg1_data), .clk(clk), .rst(rst));
 dff DFF22[31:0](.q(MEM_reg2_data), .d(EX_reg2_data), .clk(clk), .rst(rst));
 dff DFF23[2:0](.q(MEM_write_reg), .d(EX_write_reg), .clk(clk), .rst(rst));
 dff DFF24(.q(MEM_write_en), .d(EX_write_en), .clk(clk), .rst(rst));
+dff DFF33(.q(MEM_halt), .d(EX_halt), .clk(clk), .rst(rst));
 
 /*
  * MEMORY
@@ -101,6 +103,7 @@ dff DFF27[31:0](.q(WB_ALU_in), .d(MEM_ALU_out), .clk(clk), .rst(rst));
 dff DFF28(.q(WB_MemRead), .d(MEM_MemRead), .clk(clk), .rst(rst));
 dff DFF29[2:0](.q(WB_write_reg), .d(MEM_write_reg), .clk(clk), .rst(rst));
 dff DFF30[2:0](.q(WB_write_en), .d(MEM_write_en), .clk(clk), .rst(rst));
+dff DFF32(.q(WB_halt), .d(MEM_halt), .clk(clk), .rst(rst));
 
 /* WRITEBACK
  * inputs: PC, ALURes, MemRead, MemReadDataIn, write_reg, write_en
