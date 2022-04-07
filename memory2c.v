@@ -45,7 +45,7 @@ module memory2c (data_out, data_in, addr, enable, wr, createdump, clk, rst);
 
    wire [15:0]    data_out;
    
-   reg [7:0]      mem [0:65535];
+   reg [15:0]      mem [0:65535];
    reg            loaded;
    reg [16:0]     largest;
 
@@ -55,7 +55,7 @@ module memory2c (data_out, data_in, addr, enable, wr, createdump, clk, rst);
 
    //    assign data_temp_0 = mem[addr];
    //    assign data_temp_2 = mem[{addr+8'h1];
-   assign         data_out = (enable & (~wr))? {mem[addr],mem[addr+8'h1]}: 0;
+   assign         data_out = (enable & (~wr))? {mem[addr]}: 0;
    initial begin
       loaded = 0;
       largest = 0;
@@ -74,8 +74,8 @@ module memory2c (data_out, data_in, addr, enable, wr, createdump, clk, rst);
       end
       else begin
          if (enable & wr) begin
-	        mem[addr] = data_in[15:8];       // The actual write
-	        mem[addr+1] = data_in[7:0];    // The actual write
+	        mem[addr] = data_in[15:0];       // The actual write
+	        //mem[addr+1] = data_in[7:0];    // The actual write
             if ({1'b0, addr} > largest) largest = addr;  // avoid negative numbers
          end
          if (createdump) begin
