@@ -1,4 +1,4 @@
-module execute(PCIn,RqRd,Rs,instr,JumpOrBranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOut,flush,ALUOut);
+module execute(PCIn,RqRd,Rs,instr,JumpOrBranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOut,flush,ALUOut,SelectJOrB);
 
 	input [15:0]PCIn;
 	input [31:0]RqRd; // first read data from registers
@@ -15,10 +15,11 @@ module execute(PCIn,RqRd,Rs,instr,JumpOrBranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCO
 	output [15:0]PCOut;  //PC after branch logic
 	output flush;   //if we need to branch and flush previous steps
 	output [31:0]ALUOut;
+	output SelectJOrB;
 	
 	wire [31:0]A,B;
 	wire EQ,LT,GT,LE,GE,NE;
-	wire SelectJOrB;
+	
 	
 	
 	// mux between ALU inputs

@@ -1,10 +1,14 @@
 module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, JumpOrBranchHigh,
 		 RqRdOrImm, RsOrImm, ALUCtrl, MemWrite, MemRead, halt,
-		 reg1_data, reg2_data, write_reg, write_en);
+		 reg1_data, reg2_data, write_reg_out, write_en_out,
+		 write_reg_in, write_en_in, write_data);
 
       input [15:0]PC, PCPlus1; 
       input [15:0]inst;  
       input clk, rst;
+      input write_en_in;
+      input [2:0]write_reg_in;
+      input [31:0]write_data;
 
       output [15:0]PCOut; 
       output [15:0]inst_out;
@@ -18,8 +22,8 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, JumpOrBranchHigh,
       output MemWrite; //indicates if memory is being written to, goes to mem phase
       output MemRead;  //indicates if memory is being read, goes to mem phase
       output [31:0]reg1_data, reg2_data;
-      output [2:0]write_reg;
-      output write_en;
+      output [2:0]write_reg_out;
+      output write_en_out;
 
       reg [3:0]ALUIn;
       wire [2:0]RdRq, Rs;
@@ -29,14 +33,14 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, JumpOrBranchHigh,
       assign JumpOrBranchHigh = (inst[15:12] == 4'b0100) | (inst[15:12] == 4'b0010);  //1 = branch or jump, 0 = no branch or jump
       assign RqRdOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111); //1 = immediate, 0 = RdRq
       assign RsOrImm = inst[13]; //1 = use Rs, 0 = use imm
-      assign write_en = inst[15];
+      assign write_en_out = inst[15];
       assign MemWrite = inst[15:12] == 4'b0111;
       assign MemRead = inst[15:12] == 4'b1000;
       assign inst_out = inst;
-      assign write_reg = inst[11:9];
+      assign write_reg_out = inst[11:9];
 
       rf RF0(.clk(clk), .rst(rst), .read1_reg(RdRq), .read2_reg(Rs), 
-	     .write_reg(3'b000), .write_data(32'h00000000), .write_en(1'b0), 
+	     .write_reg(write_reg_in), .write_data(write_data), .write_en(write_en_in), 
 	     .read1_data(reg1_data), .read2_data(reg2_data));
 
       always @(*) begin
