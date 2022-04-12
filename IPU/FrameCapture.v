@@ -1,49 +1,42 @@
 module FrameCapture (iCLK,
 					iRST,
 					iFVAL,
-					oFrame_En,
+					oFrame_En
 					);
+
 
 input	      	iCLK;
 input			iRST;
 input			iFVAL;
 output			oFrame_En;
 
+// code starts here
 //Internel Signals 
 reg[2:0] Frame_count;
 reg Frame_En;
 reg previous_fval;
 wire current_fval;
-reg check;
+
 assign current_fval = iFVAL;
-//assign check = (Frame_count == 3'b100) ? 1'b1 : 1'b0;
-
-
 always @(posedge iCLK, posedge iRST) begin
-	if (iRST) begin
+	if(iRST) begin
+		Frame_En <= 0;
 		Frame_count <= 0;
 	end
-	else if(check == 1'b1) begin
+	else if (previous_fval === 0 && current_fval === 1) Frame_count <= Frame_count + 3'b001 ;
+	else if( Frame_count % 5 == 0) begin
+		Frame_En <= 1;
 		Frame_count <= 0;
 	end 
-	else if (previous_fval == 1) begin
-		Frame_count <= Frame_count + 3'b001 ;
-	end
-	else Frame_count <= Frame_count;
+	else Frame_En <= 0;
 end
 
-always @(*) begin
-	if(Frame_count == 3'b100) 
-		check <= 1'b1;
-	else
-		check <= 1'b0;
-end
 always @(posedge iCLK, posedge iRST) begin
 	if (iRST) previous_fval <= 1'b0;
 	else previous_fval <= current_fval;
-		
 end
 
-assign oFrame_En = (Frame_count == 3'b100) ? 1'b1 : 1'b0;
+//assign previous_fval = current_fval;
+assign oFrame_En = Frame_En;
 
 endmodule
