@@ -3,11 +3,10 @@ module proc(clk,rst);
 input clk, rst;
 
 //signals
-wire [15:0]FETCH_PC_in, FETCH_PC_out, DEC_PC_in, DEC_PC_out, EX_PC_in, 
-	EX_PC_out, MEM_PC_in, MEM_PC_out, WB_PC_in, WB_PC_out;
+wire [15:0]FETCH_PC_out, DEC_PC_in, DEC_PC_out, EX_PC_in, 
+	EX_PC_out, MEM_PC_in, WB_PC_in;
 wire [15:0]FETCH_PCPlus1, DEC_PCPlus1;
 wire [15:0]FETCH_inst, DEC_inst_in, DEC_inst_out, EX_inst_in;
-wire DEC_JumpOrBranchHigh, EX_JumpOrBranchHigh;
 wire DEC_BranchHigh, EX_BranchHigh;
 wire DEC_JumpHigh, EX_JumpHigh;
 wire DEC_RqRdOrImm, EX_RqRdOrImm;
@@ -34,10 +33,10 @@ wire selectJorB;
  */
 fetch FETCH0(.clk(clk),.rst(rst),.newPC(EX_PC_out),.instr(FETCH_inst),.PC(FETCH_PC_out),.PCPlus1(FETCH_PCPlus1),.halt(WB_halt),.jorb(selectJorB));
 
-dff DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst));
-assign fd_inst = rst ? 16'h1000 : FETCH_inst;
+dff DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst | EX_flush));
+assign fd_inst = (rst | EX_flush) ? 16'h1000 : FETCH_inst;
 dff DFF1[15:0](.q(DEC_inst_in), .d(fd_inst), .clk(clk), .rst(1'b0));
-dff DFF2[15:0](.q(DEC_PCPlus1), .d(FETCH_PCPlus1), .clk(clk), .rst(rst));
+dff DFF2[15:0](.q(DEC_PCPlus1), .d(FETCH_PCPlus1), .clk(clk), .rst(rst | EX_flush));
 
 /* 
  * DECODE
@@ -54,20 +53,20 @@ decode ID0(.clk(clk), .rst(rst), .PC(DEC_PC_in), .PCPlus1(DEC_PCPlus1), .inst(DE
 		 .reg1_data(DEC_reg1_data), .reg2_data(DEC_reg2_data), .write_reg_out(DEC_write_reg),
 		 .write_en_out(DEC_write_en), .write_en_in(WB_write_en), .write_reg_in(WB_write_reg), .write_data(WB_WriteDataOut));
 
-dff DFF3[15:0](.q(EX_PC_in), .d(DEC_PC_out), .clk(clk), .rst(rst));
-dff DFF4[15:0](.q(EX_inst_in), .d(DEC_inst_out), .clk(clk), .rst(rst));
-dff DFF5(.q(EX_BranchHigh), .d(DEC_BranchHigh), .clk(clk), .rst(rst));
-dff DFF34(.q(EX_JumpHigh), .d(DEC_JumpHigh), .clk(clk), .rst(rst));
-dff DFF6(.q(EX_RqRdOrImm), .d(DEC_RqRdOrImm), .clk(clk), .rst(rst));
-dff DFF7(.q(EX_RsOrImm), .d(DEC_RsOrImm), .clk(clk), .rst(rst));
-dff DFF8[3:0](.q(EX_ALUCtrl), .d(DEC_ALUCtrl), .clk(clk), .rst(rst));
-dff DFF9(.q(EX_MemWrite), .d(DEC_MemWrite), .clk(clk), .rst(rst));
-dff DFF10(.q(EX_MemRead), .d(DEC_MemRead), .clk(clk), .rst(rst));
-dff DFF11(.q(EX_halt), .d(DEC_halt), .clk(clk), .rst(rst));
-dff DFF12[31:0](.q(EX_reg1_data), .d(DEC_reg1_data), .clk(clk), .rst(rst));
-dff DFF13[31:0](.q(EX_reg2_data), .d(DEC_reg2_data), .clk(clk), .rst(rst));
-dff DFF14[2:0](.q(EX_write_reg), .d(DEC_write_reg), .clk(clk), .rst(rst));
-dff DFF15(.q(EX_write_en), .d(DEC_write_en), .clk(clk), .rst(rst));
+dff DFF3[15:0](.q(EX_PC_in), .d(DEC_PC_out), .clk(clk), .rst(rst | MEM_flush));
+dff DFF4[15:0](.q(EX_inst_in), .d(DEC_inst_out), .clk(clk), .rst(rst | MEM_flush));
+dff DFF5(.q(EX_BranchHigh), .d(DEC_BranchHigh), .clk(clk), .rst(rst | MEM_flush));
+dff DFF34(.q(EX_JumpHigh), .d(DEC_JumpHigh), .clk(clk), .rst(rst | MEM_flush));
+dff DFF6(.q(EX_RqRdOrImm), .d(DEC_RqRdOrImm), .clk(clk), .rst(rst | MEM_flush));
+dff DFF7(.q(EX_RsOrImm), .d(DEC_RsOrImm), .clk(clk), .rst(rst | MEM_flush));
+dff DFF8[3:0](.q(EX_ALUCtrl), .d(DEC_ALUCtrl), .clk(clk), .rst(rst | MEM_flush));
+dff DFF9(.q(EX_MemWrite), .d(DEC_MemWrite), .clk(clk), .rst(rst | MEM_flush));
+dff DFF10(.q(EX_MemRead), .d(DEC_MemRead), .clk(clk), .rst(rst | MEM_flush));
+dff DFF11(.q(EX_halt), .d(DEC_halt), .clk(clk), .rst(rst | MEM_flush));
+dff DFF12[31:0](.q(EX_reg1_data), .d(DEC_reg1_data), .clk(clk), .rst(rst | MEM_flush));
+dff DFF13[31:0](.q(EX_reg2_data), .d(DEC_reg2_data), .clk(clk), .rst(rst | MEM_flush));
+dff DFF14[2:0](.q(EX_write_reg), .d(DEC_write_reg), .clk(clk), .rst(rst | MEM_flush));
+dff DFF15(.q(EX_write_en), .d(DEC_write_en), .clk(clk), .rst(rst | MEM_flush));
 
 
 /*
@@ -113,8 +112,8 @@ dff DFF32(.q(WB_halt), .d(MEM_halt), .clk(clk), .rst(rst));
  * inputs: PC, ALURes, MemRead, MemReadDataIn, write_reg, write_en
  * outputs: PCNew, WriteDataOut, WriteRegOut, write_en_out
  */
-write WB0(.PC(WB_PC_in), .ALURes(WB_ALU_in), .MemReadDataIn(WB_MemData),
-          .MemRead(WB_MemRead), .PCNew(WB_PC_in), .WriteDataOut(WB_WriteDataOut));
+write WB0(.ALURes(WB_ALU_in), .MemReadDataIn(WB_MemData),
+          .MemRead(WB_MemRead), .WriteDataOut(WB_WriteDataOut));
 
 
 endmodule

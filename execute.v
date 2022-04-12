@@ -32,7 +32,7 @@ module execute(PCIn,RqRd,Rs,instr,JumpHigh,BranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,
 	alu ALU0(.A(A), .B(B), .ALUCtrl(ALUCtrl), .Out(ALUOut));
 	
 	// condition codes
-	condcodes CC0(.ALUCtrl(ALUCtrl),.ALUOut(ALUOut),.A(A),.B(B),.EQ(EQ),.LT(LT),.GT(GT),.LE(LE),.GE(GE),.NE(NE));
+	condcodes CC0(.B(B),.EQ(EQ),.LT(LT),.GT(GT),.LE(LE),.GE(GE),.NE(NE));
 	
 	
 	// branching logic

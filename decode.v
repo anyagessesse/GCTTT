@@ -34,7 +34,7 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
       assign BranchHigh = inst[15:12] == 4'b0010;  //1 = branch or jump, 0 = no branch or jump
       assign JumpHigh = inst[15:12] == 4'b0100;
       assign RqRdOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111); //1 = immediate, 0 = RdRq
-      assign RsOrImm = ~inst[13] & ~halt; //1 = use Rs, 0 = use imm
+      assign RsOrImm = inst[14] & inst[15] & ~halt; //1 = use imm, 0 = use Rs
       assign write_en_out = inst[15];
       assign MemWrite = inst[15:12] == 4'b0111;
       assign MemRead = inst[15:12] == 4'b1000;
