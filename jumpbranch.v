@@ -1,4 +1,4 @@
-module jumpbranch(EQ,LT,GT,LE,GE,NE,JumpOrBranchHigh,instr,SelectJOrB,flush);
+module jumpbranch(EQ,LT,GT,LE,GE,NE,JumpHigh,BranchHigh,instr,SelectJOrB,flush);
 
 	input EQ;
 	input LT;
@@ -6,7 +6,8 @@ module jumpbranch(EQ,LT,GT,LE,GE,NE,JumpOrBranchHigh,instr,SelectJOrB,flush);
 	input LE;
 	input GE;
 	input NE;
-	input JumpOrBranchHigh;
+	input JumpHigh;
+	input BranchHigh;
 	input [15:0]instr;
 	
 	output SelectJOrB;
@@ -23,7 +24,7 @@ module jumpbranch(EQ,LT,GT,LE,GE,NE,JumpOrBranchHigh,instr,SelectJOrB,flush);
 	assign w5 = (instr[2:0] == 3'b100) & EQ;
 	assign w6 = (instr[2:0] == 3'b101) & NE;
 	
-	assign SelectJOrB = JumpOrBranchHigh & (w1 | w2 | w3 | w4 | w5 | w6);
+	assign SelectJOrB = JumpHigh | (BranchHigh & (w1 | w2 | w3 | w4 | w5 | w6));
 	assign flush = SelectJOrB;
 
 
