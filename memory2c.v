@@ -45,7 +45,7 @@ module memory2c (data_out, data_in, addr, enable, wr, createdump, clk, rst);
 
    wire [15:0]    data_out;
    
-   reg [15:0]      mem [0:65535];
+   reg [15:0]     mem [0:65535];
    reg            loaded;
    reg [16:0]     largest;
 
@@ -59,8 +59,8 @@ module memory2c (data_out, data_in, addr, enable, wr, createdump, clk, rst);
    initial begin
       loaded = 0;
       largest = 0;
-      for (i = 0; i< 65536; i=i+1) begin
-         mem[i] = 8'd0;
+      for (i = 0; i< 65535; i=i+1) begin
+         mem[i] = 16'd0;
       end
    end
 

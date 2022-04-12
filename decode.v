@@ -1,4 +1,4 @@
-module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, JumpOrBranchHigh,
+module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh,
 		 RqRdOrImm, RsOrImm, ALUCtrl, MemWrite, MemRead, halt,
 		 reg1_data, reg2_data, write_reg_out, write_en_out,
 		 write_reg_in, write_en_in, write_data);
@@ -15,7 +15,8 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, JumpOrBranchHigh,
       output halt;  //goes to write back
     
       // control signals
-      output JumpOrBranchHigh;
+      output BranchHigh;
+      output JumpHigh;
       output RqRdOrImm;
       output RsOrImm;
       output [3:0]ALUCtrl;
@@ -30,7 +31,8 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, JumpOrBranchHigh,
 
       // move to control file
       assign halt = (inst[15:12] == 4'b0000) & !rst;
-      assign JumpOrBranchHigh = (inst[15:12] == 4'b0100) | (inst[15:12] == 4'b0010);  //1 = branch or jump, 0 = no branch or jump
+      assign BranchHigh = inst[15:12] == 4'b0010;  //1 = branch or jump, 0 = no branch or jump
+      assign JumpHigh = inst[15:12] == 4'b0100;
       assign RqRdOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111); //1 = immediate, 0 = RdRq
       assign RsOrImm = ~inst[13] & ~halt; //1 = use Rs, 0 = use imm
       assign write_en_out = inst[15];
