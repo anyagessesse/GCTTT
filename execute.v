@@ -1,4 +1,4 @@
-module execute(PCIn,RqRd,Rs,instr,JumpOrBranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOut,flush,ALUOut,SelectJOrB);
+module execute(PCIn,RqRd,Rs,instr,JumpHigh,BranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCOut,flush,ALUOut,SelectJOrB);
 
 	input [15:0]PCIn;
 	input [31:0]RqRd; // first read data from registers
@@ -6,7 +6,8 @@ module execute(PCIn,RqRd,Rs,instr,JumpOrBranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCO
 	input [15:0]instr;
 	
 	// control signals
-	input JumpOrBranchHigh;
+	input JumpHigh;
+	input BranchHigh;
 	input RqRdOrImm;
 	input RsOrImm;
 	input [3:0]ALUCtrl;
@@ -35,7 +36,7 @@ module execute(PCIn,RqRd,Rs,instr,JumpOrBranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,PCO
 	
 	
 	// branching logic
-	jumpbranch JB0(.EQ(EQ),.LT(LT),.GT(GT),.LE(LE),.GE(GE),.NE(NE),.JumpOrBranchHigh(JumpOrBranchHigh),.instr(instr),.SelectJOrB(SelectJOrB),.flush(flush));
+	jumpbranch JB0(.EQ(EQ),.LT(LT),.GT(GT),.LE(LE),.GE(GE),.NE(NE),.JumpHigh(JumpHigh),.BranchHigh(BranchHigh),.instr(instr),.SelectJOrB(SelectJOrB),.flush(flush));
 	
 	// mux for new PC value if branching
 	assign PCOut = SelectJOrB ? RqRd : PCIn;
