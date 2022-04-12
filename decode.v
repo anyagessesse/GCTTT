@@ -1,7 +1,7 @@
 module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh,
 		 RqRdOrImm, RsOrImm, ALUCtrl, MemWrite, MemRead, halt,
 		 reg1_data, reg2_data, write_reg_out, write_en_out,
-		 write_reg_in, write_en_in, write_data);
+		 write_reg_in, write_en_in, write_data,RqRd,Rs);
 
       input [15:0]PC, PCPlus1; 
       input [15:0]inst;  
@@ -25,9 +25,10 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
       output [31:0]reg1_data, reg2_data;
       output [2:0]write_reg_out;
       output write_en_out;
+      output [2:0]RdRq, Rs;
 
       reg [3:0]ALUIn;
-      wire [2:0]RdRq, Rs;
+     
 
       // move to control file
       assign halt = (inst[15:12] == 4'b0000) & !rst;
