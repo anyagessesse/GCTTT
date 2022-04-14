@@ -17,9 +17,9 @@ MOV R1, 1
 MOV R2, 2
 MOV R3, 3
 MOV R4, 4
-MOV R5, 5
-MOV R6, 6
-MOV R7, 7
+MOV R5, FRAME_WIDTH
+MOV R6, FRAME_HEIGHT
+MOV R7, DEPTH
 
 ADD R0, R0, R1		# use one of each instruction
 SUB R0, R7, R0		

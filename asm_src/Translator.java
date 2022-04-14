@@ -62,7 +62,7 @@ public class Translator {
 	private static final Type MOV = new Type("MOV", "xxxx", "xxx"); // MV0+MV1+MV2+MV3
 	
 	// static fields
-	private static boolean debug = false;
+	private static boolean debug = Driver.debug;
 	private static SymbolTable symTab = null;
 	
 	/*
@@ -685,6 +685,13 @@ public class Translator {
 	}
 	
 	/*
+	 * Returns the decimal translation of the given 6 bit binary offset.
+	 */
+	private static String getOffsetAsm(String offsetToken, int lineNum) {
+		return binaryToDecimal(offsetToken, lineNum)+"";
+	}
+	
+	/*
 	 * Returns an assembly representation of the given instruction.
 	 */
 	public static void decodeInstruction(String instr, List<String> rsm) {
@@ -897,7 +904,7 @@ public class Translator {
 			rd = getRegAsm(binary.substring(4, 7), lineNum);
 						
 			// get immediate
-			imm = getImmAsm(binary.substring(9, 16), lineNum);
+			imm = getImmAsm(binary.substring(8, 16), lineNum);
 						
 			// compose assembly
 			str = MV0.name+" "+rd+", "+imm;
@@ -911,227 +918,190 @@ public class Translator {
 			rd = getRegAsm(binary.substring(4, 7), lineNum);
 						
 			// get immediate
-			imm = getImmAsm(binary.substring(9, 16), lineNum);
+			imm = getImmAsm(binary.substring(8, 16), lineNum);
 						
 			// compose assembly
-			str = MV0.name+" "+rd+", "+imm;
+			str = MV1.name+" "+rd+", "+imm;
 			rsm.add(str);
 			if(debug) { System.out.println(TAB+str); }
-		}/*
-					else if(name.contentEquals(MV2.name)) {
-						// MV2 Rd, imm8
-						// <oooo><ddd><x><ii iii iii>
-						// extract register
-						rd = getRegBinary(tokens[2].replace(",",""), lineNum);
+		}
+		else if(opcode.contentEquals(MV2.opcode)) {
+			// MV2 Rd, imm8
+			// <oooo><ddd><x><ii iii iii>
+			// extract register
+			rd = getRegAsm(binary.substring(4, 7), lineNum);
 						
-						// get immediate
-						imm = getImmBinary(tokens[3].replace(",", ""), 16, 23, lineNum);
+			// get immediate
+			imm = getImmAsm(binary.substring(8, 16), lineNum);
 						
-						// compose binary
-						str = MV2.opcode+rd+"0"+imm;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(MV3.name)) {
-						// MV3 Rd, imm8
-						// <oooo><ddd><x><ii iii iii>
-						// extract register
-						rd = getRegBinary(tokens[2].replace(",",""), lineNum);
+			// compose assembly
+			str = MV2.name+" "+rd+", "+imm;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(MV3.opcode)) {
+			// MV3 Rd, imm8
+			// <oooo><ddd><x><ii iii iii>
+			// extract register
+			rd = getRegAsm(binary.substring(4, 7), lineNum);
 						
-						// get immediate
-						imm = getImmBinary(tokens[3].replace(",", ""), 24, 31, lineNum);
+			// get immediate
+			imm = getImmAsm(binary.substring(8, 16), lineNum);
 						
-						// compose binary
-						str = MV3.opcode+rd+"0"+imm;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					// CONTROL FLOW ////////////////////////////////////////////////////
-					else if(name.contentEquals(BRLT.name)) {
-						// BRLT Rs, Rq
-						// <oooo><xxx><sss><qqq><fff>
-						// extract registers
-						rs = getRegBinary(tokens[2].replace(",",""), lineNum);
-						rq = getRegBinary(tokens[3].replace(",",""), lineNum);
+			// compose assembly
+			str = MV3.name+" "+rd+", "+imm;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		// CONTROL FLOW ////////////////////////////////////////////////////
+		else if(opcode.contentEquals(BRLT.opcode) && fncode.contentEquals(BRLT.fncode)) {
+			// BRLT Rs, Rq
+			// <oooo><xxx><sss><qqq><fff>
+			// extract registers
+			rs = getRegAsm(binary.substring(7, 10), lineNum);
+			rq = getRegAsm(binary.substring(10, 13), lineNum);
 						
-						// compose binary
-						str = BRLT.opcode+rd+rs+rq+BRLT.fncode;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(BRGT.name)) {
-						// BRGT Rs, Rq
-						// <oooo><xxx><sss><qqq><fff>
-						// extract registers
-						rs = getRegBinary(tokens[2].replace(",",""), lineNum);
-						rq = getRegBinary(tokens[3].replace(",",""), lineNum);
+			// compose assembly
+			str = BRLT.name+" "+rs+", "+rq;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(BRGT.opcode) && fncode.contentEquals(BRGT.fncode)) {
+			// BRGT Rs, Rq
+			// <oooo><xxx><sss><qqq><fff>
+			// extract registers
+			rs = getRegAsm(binary.substring(7, 10), lineNum);
+			rq = getRegAsm(binary.substring(10, 13), lineNum);
 						
-						// compose binary
-						str = BRGT.opcode+rd+rs+rq+BRGT.fncode;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(BRLE.name)) {
-						// BRLE Rs, Rq
-						// <oooo><xxx><sss><qqq><fff>
-						// extract registers
-						rs = getRegBinary(tokens[2].replace(",",""), lineNum);
-						rq = getRegBinary(tokens[3].replace(",",""), lineNum);
+			// compose assembly
+			str = BRGT.name+" "+rs+", "+rq;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(BRLE.opcode) && fncode.contentEquals(BRLE.fncode)) {
+			// BRLE Rs, Rq
+			// <oooo><xxx><sss><qqq><fff>
+			// extract registers
+			rs = getRegAsm(binary.substring(7, 10), lineNum);
+			rq = getRegAsm(binary.substring(10, 13), lineNum);
 						
-						// compose binary
-						str = BRLE.opcode+rd+rs+rq+BRLE.fncode;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(BRGE.name)) {
-						// BRGE Rs, Rq
-						// <oooo><xxx><sss><qqq><fff>
-						// extract registers
-						rs = getRegBinary(tokens[2].replace(",",""), lineNum);
-						rq = getRegBinary(tokens[3].replace(",",""), lineNum);
+			// compose assembly
+			str = BRLE.name+" "+rs+", "+rq;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(BRGE.opcode) && fncode.contentEquals(BRGE.fncode)) {
+			// BRGE Rs, Rq
+			// <oooo><xxx><sss><qqq><fff>
+			// extract registers
+			rs = getRegAsm(binary.substring(7, 10), lineNum);
+			rq = getRegAsm(binary.substring(10, 13), lineNum);
 						
-						// compose binary
-						str = BRGE.opcode+rd+rs+rq+BRGE.fncode;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(BREQ.name)) {
-						// BREQ Rs, Rq
-						// <oooo><xxx><sss><qqq><fff>
-						// extract registers
-						rs = getRegBinary(tokens[2].replace(",",""), lineNum);
-						rq = getRegBinary(tokens[3].replace(",",""), lineNum);
+			// compose assembly
+			str = BRGE.name+" "+rs+", "+rq;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(BREQ.opcode) && fncode.contentEquals(BREQ.fncode)) {
+			// BREQ Rs, Rq
+			// <oooo><xxx><sss><qqq><fff>
+			// extract registers
+			rs = getRegAsm(binary.substring(7, 10), lineNum);
+			rq = getRegAsm(binary.substring(10, 13), lineNum);
 						
-						// compose binary
-						str = BREQ.opcode+rd+rs+rq+BREQ.fncode;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(BRNE.name)) {
-						// BRNE Rs, Rq
-						// <oooo><xxx><sss><qqq><fff>
-						// extract registers
-						rs = getRegBinary(tokens[2].replace(",",""), lineNum);
-						rq = getRegBinary(tokens[3].replace(",",""), lineNum);
+			// compose assembly
+			str = BREQ.name+" "+rs+", "+rq;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(BRNE.opcode) && fncode.contentEquals(BRNE.fncode)) {
+			// BRNE Rs, Rq
+			// <oooo><xxx><sss><qqq><fff>
+			// extract registers
+			rs = getRegAsm(binary.substring(7, 10), lineNum);
+			rq = getRegAsm(binary.substring(10, 13), lineNum);
 						
-						// compose binary
-						str = BRNE.opcode+rd+rs+rq+BRNE.fncode;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(J.name)) {
-						// J Rd
-						// <oooo><ddd><xxx xxx xxx>
-						// extract register
-						rd = getRegBinary(tokens[2].replace(",",""), lineNum);
+			// compose assembly
+			str = BRNE.name+" "+rs+", "+rq;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(J.opcode)) {
+			// J Rd
+			// <oooo><ddd><xxx xxx xxx>
+			// extract register
+			rd = getRegAsm(binary.substring(4, 7), lineNum);
 						
-						// compose binary
-						str = J.opcode+rd+"000000000";
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					// MEMORY //////////////////////////////////////////////////////////
-					else if(name.contentEquals(LD.name)) {
-						// LD Rd, Rs, imm6
-						// <oooo><ddd><sss><iii iii>
-						// extract registers
-						rd = getRegBinary(tokens[2].replace(",",""), lineNum);
-						rs = getRegBinary(tokens[3].replace(",",""), lineNum);
+			// compose assembly
+			str = J.name+" "+rd;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		// MEMORY //////////////////////////////////////////////////////////
+		else if(opcode.contentEquals(LD.opcode)) {
+			// LD Rd, Rs, imm6
+			// <oooo><ddd><sss><iii iii>
+			// extract registers
+			rd = getRegAsm(binary.substring(4, 7), lineNum);
+			rs = getRegAsm(binary.substring(7, 10), lineNum);
 						
-						// get immediate
-						imm = getOffset(tokens[4].replace(",",""), lineNum);
+			// get immediate
+			imm = getOffsetAsm(binary.substring(10, 16), lineNum);
 						
-						// compose binary
-						str = LD.opcode+rd+rs+imm;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(ST.name)) {
-						// ST Rd, Rs, imm6
-						// <oooo><ddd><sss><iii iii>
-						// extract registers
-						rd = getRegBinary(tokens[2].replace(",",""), lineNum);
-						rs = getRegBinary(tokens[3].replace(",",""), lineNum);
+			// compose assembly
+			str = LD.name+" "+rd+", "+rs+", "+imm;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(ST.opcode)) {
+			// ST Rd, Rs, imm6
+			// <oooo><ddd><sss><iii iii>
+			// extract registers
+			rd = getRegAsm(binary.substring(4, 7), lineNum);
+			rs = getRegAsm(binary.substring(7, 10), lineNum);
 						
-						// get immediate
-						imm = getOffset(tokens[4].replace(",",""), lineNum);
+			// get immediate
+			imm = getOffsetAsm(binary.substring(10, 16), lineNum);
 						
-						// compose binary
-						str = ST.opcode+rd+rs+imm;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					// SPECIAL /////////////////////////////////////////////////////////
-					else if(name.contentEquals(LDC.name)) {
-						// LDC Rd
-						// <oooo><ddd><xxx xxx xxx>
-						// extract register
-						rd = getRegBinary(tokens[2].replace(",",""), lineNum);
+			// compose assembly
+			str = ST.name+" "+rd+", "+rs+", "+imm;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		// SPECIAL /////////////////////////////////////////////////////////
+		else if(opcode.contentEquals(LDC.opcode)) {
+			// LDC Rd
+			// <oooo><ddd><xxx xxx xxx>
+			// extract register
+			rd = getRegAsm(binary.substring(4, 7), lineNum);
 						
-						// compose binary
-						str = LDC.opcode+rd+"000000000";
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(NOP.name)) {
-						// NOP
-						// <oooo><xxx xxx xxx xxx>				
-						// compose binary
-						str = NOP.opcode+"000000000000";
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					else if(name.contentEquals(HALT.name)) {
-						// HALT
-						// <oooo><xxx xxx xxx xxx>				
-						// compose binary
-						str = HALT.opcode+"000000000000";
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-					// PSUEDO //////////////////////////////////////////////////////////
-					else if(name.contentEquals(MOV.name)) {
-						// MOV Rd, imm32
-						// 		MV0 Rd, imm8		<oooo><ddd><x><ii iii iii>
-						// 		MV1 Rd, imm8		<oooo><ddd><x><ii iii iii>
-						//		MV2 Rd, imm8		<oooo><ddd><x><ii iii iii>
-						//		MV3 Rd, imm8		<oooo><ddd><x><ii iii iii>
-						
-						// extract target register and immediate token
-						rd = getRegBinary(tokens[2].replace(",",""), lineNum);
-						immToken = tokens[3].replace(",", "");
-						
-						// MV0
-						imm = getImmBinary(immToken, 0, 7, lineNum);
-						str = MV0.opcode+rd+"0"+imm;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-						
-						// MV1
-						imm = getImmBinary(immToken, 8, 15, lineNum);
-						str = MV1.opcode+rd+"0"+imm;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-						
-						// MV2
-						imm = getImmBinary(immToken, 16, 23, lineNum);
-						str = MV2.opcode+rd+"0"+imm;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-						
-						// MV3
-						imm = getImmBinary(immToken, 24, 31, lineNum);
-						str = MV3.opcode+rd+"0"+imm;
-						o.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}*/
-					// ELSE ////////////////////////////////////////////////////////////
-					else { // unrecognized line
-						str = "???";
-						rsm.add(str);
-						if(debug) { System.out.println(TAB+str); }
-					}
-		
+			// compose assembly
+			str = LDC.name+" "+rd;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(NOP.opcode)) {
+			// NOP
+			// <oooo><xxx xxx xxx xxx>				
+			// compose assembly
+			str = NOP.name;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(HALT.opcode)) {
+			// HALT
+			// <oooo><xxx xxx xxx xxx>				
+			// compose assembly
+			str = HALT.name;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		// ELSE ////////////////////////////////////////////////////////////
+		else { // unrecognized line
+			str = "???";
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
 		
 		return;
 	}

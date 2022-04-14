@@ -18,7 +18,7 @@ public class Driver {
 	private static final int PC_START = 0; // address of first instruction
 	
 	// static fields
-	private static boolean debug = false;
+	public static boolean debug = false;
 	
 	/*
 	 * Translates given assembly file to machine code and returns result as a 
@@ -70,7 +70,7 @@ public class Driver {
 				else { // save line for second pass
 					line = lineNum+" "+line;
 					asm.add(line);
-					pc += PC_INC;
+					pc += line.contains("MOV") ? 4*PC_INC : PC_INC;
 				}
 				
 				++lineNum;
@@ -283,6 +283,7 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		int opcode = 0; // number corresponding to which operation we should perform
+		int debugBinary = 0; // 0 if debug is turned off
 		String filenameIn = null; // name of input file
 		String fileExtIn = null; // extension of input file
 		String filenameOut = null; // name of output file
@@ -291,14 +292,15 @@ public class Driver {
 		List<String> contents = null; // contents of output file where each element is a single line of text
 		
 		// make sure we have the right number of args
-		if(args.length != 2) {
-			System.out.println("Must have 2 arguments: "+args.length);
+		if(args.length < 2) {
+			System.out.println("Must have at least 2 arguments: "+args.length);
 			System.exit(0);
 		}
 		
 		// get opcode and make sure it is recognized
 		try {
 			opcode = Integer.parseInt(args[0]);
+			
 			if(opcode < 0 || opcode > 1) {
 				throw new Exception();
 			}
@@ -307,6 +309,22 @@ public class Driver {
 			System.out.println("Invalid opcode: "+args[0]);
 			System.exit(0);
 		}
+		
+		// get debug mode (assume false if not specified)
+		if(args.length > 2) {
+			try {
+				debugBinary = Integer.parseInt(args[2]);
+				
+				if(debugBinary < 0 || debugBinary > 1) {
+					throw new Exception();
+				}
+			}
+			catch(Exception e) {
+				System.out.println("Invalid opcode: "+args[0]);
+				System.exit(0);
+			}
+		}
+		debug = (debugBinary == 1);
 		
 		// get filename and make sure extension matches operation
 		filenameIn = args[1];
