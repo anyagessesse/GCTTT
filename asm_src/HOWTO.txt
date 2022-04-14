@@ -1,0 +1,11 @@
+HOW TO USE THE ASSEMBLER
+	- Make sure all files are in the same folder
+		- Assembler source files
+		- Batch script
+		- Program file (.asm) that you want to assemble
+	- Windows
+		- Double click the batch script
+		- Follow directions in popup
+	- Any (too bad for mac users, oh well)
+		- Run the following command from the assembler folder
+			> java Driver 0 <filename>.asm
