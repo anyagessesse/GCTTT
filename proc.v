@@ -111,7 +111,7 @@ dff DFF40[15:0](.q(MEM_inst_in), .d(EX_inst_in), .clk(clk), .rst(rst));
  */
 memory MEM0(.flush(MEM_flush), .RdRqIn(MEM_reg1_data), .ALURes(MEM_ALU_in), 
 		.Mem_Write(MEM_MemWrite), .ALUOut(MEM_ALU_out), .MemRead(MEM_MemRead), 
-                .WriteRegDataOut(MEM_RegData));
+                .WriteRegDataOut(MEM_RegData), .clk(clk), .rst(rst));
 
 dff DFF25[15:0](.q(WB_PC_in), .d(MEM_PC_in), .clk(clk), .rst(rst));
 dff DFF26[31:0](.q(WB_RegData), .d(MEM_RegData), .clk(clk), .rst(rst));
