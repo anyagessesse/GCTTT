@@ -53,7 +53,7 @@ decode ID0(.clk(clk), .rst(rst), .PC(DEC_PC_in), .PCPlus1(DEC_PCPlus1), .inst(DE
 		 .RqRdOrImm(DEC_RqRdOrImm), .RsOrImm(DEC_RsOrImm), .ALUCtrl(DEC_ALUCtrl), 
 		 .MemWrite(DEC_MemWrite), .MemRead(DEC_MemRead), .halt(DEC_halt),
 		 .reg1_data(DEC_reg1_data), .reg2_data(DEC_reg2_data), .write_reg_out(DEC_write_reg),
-		 .write_en_out(DEC_write_en), .write_en_in(WB_write_en), .write_reg_in(WB_write_reg), .write_data(WB_WriteDataOut)
+		 .write_en_out(DEC_write_en), .write_en_in(WB_write_en), .write_reg_in(WB_write_reg), .write_data(WB_RegData),
 			.RqRd(DEC_RqRd),.Rs(DEC_Rs));
 
 dff DFF3[15:0](.q(EX_PC_in), .d(DEC_PC_out), .clk(clk), .rst(rst | MEM_flush));
@@ -82,7 +82,7 @@ dff DFF44[2:0](.q(EX_Rs), .d(DEC_Rs), .clk(clk), .rst(rst | MEM_flush));
  */
 
 
-ALUForward ALUF0(.WB_RdData_in(WB_RegData),.MEM_RdData_in(MEM_RegData),.RqRdData(EX_reg1_data),.RsData(EX_reg2_data),.WB_Rd_in(WB_inst_in[11:9]),.MEM_Rd_in(MEM_inst_in[11:9]),.RqRd(EX_RqRd),.Rs(EX_Rs),.PrevNoRd(),.PrevPrevNoRd(),.PrevMemRead(),.PrevPrevMemRead(),.fRqRdData(fRqRdData),.fRsData(fRsData));
+ALUForward ALUF0(.WB_RdData_in(WB_RegData),.MEM_RdData_in(MEM_RegData),.RqRdData(EX_reg1_data),.RsData(EX_reg2_data),.WB_Rd_in(WB_inst_in[11:9]),.MEM_Rd_in(MEM_inst_in[11:9]),.RqRd(EX_RqRd),.Rs(EX_Rs),.PrevWriteEn(MEM_write_en),.PrevPrevWriteEn(WB_write_en),.PrevMemRead(MEM_MemRead),.PrevPrevMemRead(WB_MemRead),.fRqRdData(fRqRdData),.fRsData(fRsData));
 
 
 execute EX0(.PCIn(EX_PC_in),.RqRd(fRqRdData),.Rs(fRsData),
@@ -102,7 +102,7 @@ dff DFF22[31:0](.q(MEM_reg2_data), .d(EX_reg2_data), .clk(clk), .rst(rst));
 dff DFF23[2:0](.q(MEM_write_reg), .d(EX_write_reg), .clk(clk), .rst(rst));
 dff DFF24(.q(MEM_write_en), .d(EX_write_en), .clk(clk), .rst(rst));
 dff DFF33(.q(MEM_halt), .d(EX_halt), .clk(clk), .rst(rst));
-dff DFF40[15:0](.q(MEM_inst_in), .d(EX_inst_in), .clk(clk), .rst(rst); 
+dff DFF40[15:0](.q(MEM_inst_in), .d(EX_inst_in), .clk(clk), .rst(rst)); 
 
 /*
  * MEMORY
@@ -120,7 +120,7 @@ dff DFF28(.q(WB_MemRead), .d(MEM_MemRead), .clk(clk), .rst(rst));
 dff DFF29[2:0](.q(WB_write_reg), .d(MEM_write_reg), .clk(clk), .rst(rst));
 dff DFF30[2:0](.q(WB_write_en), .d(MEM_write_en), .clk(clk), .rst(rst));
 dff DFF32(.q(WB_halt), .d(MEM_halt), .clk(clk), .rst(rst));
-dff DFF41[15:0](.q(WB_inst_in), .d(MEM_inst_in), .clk(clk), .rst(rst); 
+dff DFF41[15:0](.q(WB_inst_in), .d(MEM_inst_in), .clk(clk), .rst(rst)); 
 
 /* WRITEBACK
  * inputs: PC, ALURes, MemRead, MemReadDataIn, write_reg, write_en

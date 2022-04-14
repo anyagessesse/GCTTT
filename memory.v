@@ -7,10 +7,7 @@ module memory(flush, RdRqIn, ALURes, Mem_Write, MemRead,
     input [31:0]ALURes;
     input Mem_Write;	//1 = write to memory
     input MemRead;
-    input [31:0]MemReadDataIn;
 
-    //output [15:0]PCOut;
-    output [31:0]ReadDataOut;
     output [31:0]ALUOut;
     output [31:0]WriteRegDataOut;
 

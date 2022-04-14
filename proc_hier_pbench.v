@@ -136,7 +136,7 @@ module proc_hier_pbench();
    assign WriteRegister = DUT.p0.DEC_write_reg;
    // The name of the register being written to. (3 bit signal)
    
-   assign WriteData = DUT.p0.WB_MemData;
+   assign WriteData = DUT.p0.WB_RegData;
    // Data being written to the register. (16 bits)
    
    assign MemRead =  DUT.p0.MEM_MemRead;
@@ -153,7 +153,7 @@ module proc_hier_pbench();
    assign MemDataIn = DUT.p0.MEM_ALU_in;
    // Data to be written to memory for memory writes (16 bits)
    
-   assign MemDataOut = DUT.p0.MEM_MemData;
+   assign MemDataOut = DUT.p0.MEM0.MemDataOut;
    // Data read from memory for memory reads (16 bits)
 
    // new added 05/03

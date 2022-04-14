@@ -25,7 +25,7 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
       output [31:0]reg1_data, reg2_data;
       output [2:0]write_reg_out;
       output write_en_out;
-      output [2:0]RdRq, Rs;
+      output [2:0]RqRd, Rs;
 
       reg [3:0]ALUIn;
      
@@ -36,13 +36,13 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
       assign JumpHigh = inst[15:12] == 4'b0100;
       assign RqRdOrImm = (inst[15:12] == 4'b1000) | (inst[15:12] == 4'b0111); //1 = immediate, 0 = RdRq
       assign RsOrImm = inst[14] & inst[15] & ~halt; //1 = use imm, 0 = use Rs
-      assign write_en_out = inst[15];
+      assign write_en_out = inst[15] | (inst[15:12] == 4'b0110);
       assign MemWrite = inst[15:12] == 4'b0111;
       assign MemRead = inst[15:12] == 4'b1000;
       assign inst_out = inst;
       assign write_reg_out = inst[11:9];
 
-      rf RF0(.clk(clk), .rst(rst), .read1_reg(RdRq), .read2_reg(Rs), 
+      rf RF0(.clk(clk), .rst(rst), .read1_reg(RqRd), .read2_reg(Rs), 
 	     .write_reg(write_reg_in), .write_data(write_data), .write_en(write_en_in), 
 	     .read1_data(reg1_data), .read2_data(reg2_data));
 
@@ -64,7 +64,7 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
       assign PCOut = (inst[15:12] == 4'b0000) ? PC : PCPlus1;
 
       // select rd or rq register, pass register numbers to rf
-      assign RdRq = inst[14] ? inst[11:9] : inst[5:3];
+      assign RqRd = inst[14] ? inst[11:9] : inst[5:3];
       assign Rs = inst[8:6];
 
   
