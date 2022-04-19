@@ -1,7 +1,7 @@
 module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh,
 		 RqRdOrImm, RsOrImm, ALUCtrl, MemWrite, MemRead, halt,
 		 reg1_data, reg2_data, write_reg_out, write_en_out,
-		 write_reg_in, write_en_in, write_data,RqRd,Rs);
+		 write_reg_in, write_en_in, write_data,RqRd,Rs,leds);
 
       input [15:0]PC, PCPlus1; 
       input [15:0]inst;  
@@ -13,6 +13,7 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
       output [15:0]PCOut; 
       output [15:0]inst_out;
       output halt;  //goes to write back
+      output [9:0]leds;
     
       // control signals
       output BranchHigh;
@@ -44,7 +45,7 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
 
       rf RF0(.clk(clk), .rst(rst), .read1_reg(RqRd), .read2_reg(Rs), 
 	     .write_reg(write_reg_in), .write_data(write_data), .write_en(write_en_in), 
-	     .read1_data(reg1_data), .read2_data(reg2_data));
+	     .read1_data(reg1_data), .read2_data(reg2_data), .leds(leds));
 
       always @(*) begin
 	case (inst[15:12]) 

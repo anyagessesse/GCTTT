@@ -26,8 +26,9 @@ module fetch(clk, rst,newPC,instr,PC,PCPlus1,halt,jorb);
 	// adder to increment the PC (what value to increment by?)
 	assign PCPlus1 = PC + 1;
 	
+	ram1port MEM0(.address(PC),.clock(clk),.data(16'h0000),.wren(1'b0),.q(instr));
 	// fetch instruction from memory (how will memory work for instructions?)
-	memory2c MEM0(.data_out(instr), .data_in(16'h0000), .addr(PC), .enable(1'b1), .wr(1'b0), .createdump(1'b0), .clk(clk), .rst(rst));
+	//memory2c MEM0(.data_out(instr), .data_in(16'h0000), .addr(PC), .enable(1'b1), .wr(1'b0), .createdump(1'b0), .clk(clk), .rst(rst));
 
 
 endmodule

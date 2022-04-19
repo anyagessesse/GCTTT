@@ -1,8 +1,9 @@
-module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1_data, read2_data);
+module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1_data, read2_data,leds);
   
   input [2:0]read1_reg, read2_reg, write_reg;
   input [31:0]write_data;
   input write_en, clk, rst;
+  output [9:0]leds;
   
   output [31:0]read1_data, read2_data;
   
@@ -26,6 +27,8 @@ module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1
                       read2_reg == 3'b100 ? reg4 :
                       read2_reg == 3'b101 ? reg5 :
                       read2_reg == 3'b110 ? reg6 : reg7;
+
+  assign leds = reg1[9:0];
   
 
   //write data

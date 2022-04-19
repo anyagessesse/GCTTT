@@ -1,6 +1,7 @@
-module proc(clk,rst);
+module proc(clk,rst,leds);
 
 input clk, rst;
+input [9:0]leds;
 
 //signals
 wire [15:0]FETCH_PC_out, DEC_PC_in, DEC_PC_out, EX_PC_in, 
@@ -54,7 +55,7 @@ decode ID0(.clk(clk), .rst(rst), .PC(DEC_PC_in), .PCPlus1(DEC_PCPlus1), .inst(DE
 		 .MemWrite(DEC_MemWrite), .MemRead(DEC_MemRead), .halt(DEC_halt),
 		 .reg1_data(DEC_reg1_data), .reg2_data(DEC_reg2_data), .write_reg_out(DEC_write_reg),
 		 .write_en_out(DEC_write_en), .write_en_in(WB_write_en), .write_reg_in(WB_write_reg), .write_data(WB_RegData),
-			.RqRd(DEC_RqRd),.Rs(DEC_Rs));
+			.RqRd(DEC_RqRd),.Rs(DEC_Rs), .leds(leds));
 
 dff DFF3[15:0](.q(EX_PC_in), .d(DEC_PC_out), .clk(clk), .rst(rst | MEM_flush));
 dff DFF4[15:0](.q(EX_inst_in), .d(DEC_inst_out), .clk(clk), .rst(rst | MEM_flush));
