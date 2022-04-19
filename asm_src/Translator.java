@@ -1253,4 +1253,76 @@ public class Translator {
 		// conversion is good
 		return literal;
 	}
+	
+	public static String binaryToHex(String binary) {
+		String hex = "";
+		String quarter = "";
+		String digit = "";
+		
+		for(int i = 0; i < 16; i+=4) {
+			quarter = binary.substring(i, i+4);
+			digit = "X";
+			if(quarter.contentEquals("0000")) {
+				digit = "0";
+			}
+			else if(quarter.contentEquals("0001")) {
+				digit = "1";
+			}
+			else if(quarter.contentEquals("0010")) {
+				digit = "2";
+			}
+			else if(quarter.contentEquals("0011")) {
+				digit = "3";
+			}
+			else if(quarter.contentEquals("0100")) {
+				digit = "4";
+			}
+			else if(quarter.contentEquals("0101")) {
+				digit = "5";
+			}
+			else if(quarter.contentEquals("0110")) {
+				digit = "6";
+			}
+			else if(quarter.contentEquals("0111")) {
+				digit = "7";
+			}
+			else if(quarter.contentEquals("1000")) {
+				digit = "8";
+			}
+			else if(quarter.contentEquals("1001")) {
+				digit = "9";
+			}
+			else if(quarter.contentEquals("1010")) {
+				digit = "A";
+			}
+			else if(quarter.contentEquals("1011")) {
+				digit = "B";
+			}
+			else if(quarter.contentEquals("1100")) {
+				digit = "C";
+			}
+			else if(quarter.contentEquals("1101")) {
+				digit = "D";
+			}
+			else if(quarter.contentEquals("1110")) {
+				digit = "E";
+			}
+			else if(quarter.contentEquals("1111")) {
+				digit = "F";
+			}
+			else {
+				System.out.println("SYSTEM FAILURE. Translation missing: "+quarter);
+				System.exit(0);
+			}
+			
+			hex += digit;
+		}
+		
+		if(debug) {
+			System.out.println("Translating "+binary);
+			System.out.println(TAB+hex);
+		}
+		
+		return hex;
+	}
 }

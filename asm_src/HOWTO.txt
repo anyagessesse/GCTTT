@@ -8,4 +8,4 @@ HOW TO USE THE ASSEMBLER
 		- Follow directions in popup
 	- Any (too bad for mac users, oh well)
 		- Run the following command from the assembler folder
-			> java Driver 0 <filename>.asm
+			> java Driver <filename>.asm 0 0

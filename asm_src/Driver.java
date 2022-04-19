@@ -16,6 +16,11 @@ public class Driver {
 	// constants
 	private static final int PC_INC = 1; // increment PC by this much for each instruction
 	private static final int PC_START = 0; // address of first instruction
+	private static final int ASM_MODE_BINARY = 0; // assemble to 16 bit binary instructions
+	private static final int ASM_MODE_HEX = 1; // assemble to 4 digit hex instructions
+	private static final int ASM_MODE_REASSEMBLE = 2; // re-assemble 16 bit binary instructions
+	private static final int DEBUG_MODE_ON = 1;
+	private static final int DEBUG_MODE_OFF = 0;
 	
 	// static fields
 	public static boolean debug = false;
@@ -242,6 +247,19 @@ public class Driver {
 		return;
 	}
 	
+	/*
+	 * Converts each 16 bit binary string in given list to a 4 digit hex string
+	 */
+	private static List<String> toHex(List<String> binary) {
+		ArrayList<String> hex = new ArrayList<String>();
+		
+		for(int i = 0; i < binary.size(); ++i) {
+			hex.add(Translator.binaryToHex(binary.get(i)));
+		}
+		
+		return hex;
+	}
+	
 	
 	/*
 	 * Prints each element of the contents list as its own line to the given 
@@ -277,13 +295,15 @@ public class Driver {
 
 	/*
 	 * Expecting command line arguments:
-	 * 		- opcode - 0 for assembly, 1 for re-assembly
-	 * 		- filename - name of file to be operated on
+	 * java Driver prog.asm
+	 * 		- args[0] = filename - name of file to be operated on
+	 * 		- args[1] = asmMode - 0 for asm-to-binary, 1 for asm-to-hex, 2 for binary-to-asm
+	 * 		- args[2] = debugMode - 0 for debug off, 1 for debug on
 	 * Target file must be located in same directory as this.
 	 */
 	public static void main(String[] args) {
-		int opcode = 0; // number corresponding to which operation we should perform
-		int debugBinary = 0; // 0 if debug is turned off
+		int debugMode = DEBUG_MODE_OFF; // what sort of debug messages do we want
+		int asmMode = ASM_MODE_BINARY; // which operation should we performed
 		String filenameIn = null; // name of input file
 		String fileExtIn = null; // extension of input file
 		String filenameOut = null; // name of output file
@@ -292,43 +312,40 @@ public class Driver {
 		List<String> contents = null; // contents of output file where each element is a single line of text
 		
 		// make sure we have the right number of args
-		if(args.length < 2) {
-			System.out.println("Must have at least 2 arguments: "+args.length);
+		if(args.length != 3) {
+			System.out.println("Expecting 3 arguments not "+args.length+" arguments.");
 			System.exit(0);
 		}
 		
-		// get opcode and make sure it is recognized
+		// get assembly mode and make sure it is valid
 		try {
-			opcode = Integer.parseInt(args[0]);
-			
-			if(opcode < 0 || opcode > 1) {
+			asmMode = Integer.parseInt(args[1]);
+			if(asmMode != ASM_MODE_BINARY && asmMode != ASM_MODE_HEX && asmMode != ASM_MODE_REASSEMBLE) {
 				throw new Exception();
 			}
 		}
 		catch(Exception e) {
-			System.out.println("Invalid opcode: "+args[0]);
+			System.out.println("Unrecognized assembly mode: "+args[1]);
 			System.exit(0);
 		}
 		
-		// get debug mode (assume false if not specified)
-		if(args.length > 2) {
-			try {
-				debugBinary = Integer.parseInt(args[2]);
-				
-				if(debugBinary < 0 || debugBinary > 1) {
-					throw new Exception();
-				}
-			}
-			catch(Exception e) {
-				System.out.println("Invalid opcode: "+args[0]);
-				System.exit(0);
+		// get debug mode
+		try {
+			debugMode = Integer.parseInt(args[2]);
+			
+			if(debugMode != DEBUG_MODE_ON && debugMode != DEBUG_MODE_OFF) {
+				throw new Exception();
 			}
 		}
-		debug = (debugBinary == 1);
+		catch(Exception e) {
+			System.out.println("Unrecognized debug mode: "+args[2]);
+			System.exit(0);
+		}
+		debug = (debugMode == DEBUG_MODE_ON);
 		
 		// get filename and make sure extension matches operation
-		filenameIn = args[1];
-		if(opcode == 0) { // expecting assembly file (.asm)
+		filenameIn = args[0];
+		if(asmMode == ASM_MODE_BINARY) { // expecting assembly file (.asm)
 			fileExtIn = filenameIn.substring(filenameIn.length()-4);
 			if(!fileExtIn.equals(".asm")) {
 				System.out.println("Failed to assemble. File must end in .asm: "+filenameIn);
@@ -336,7 +353,15 @@ public class Driver {
 			}
 			filenameOut = filenameIn.substring(0, filenameIn.length()-4) + ".o";
 		}
-		else { // expecting object file (.o)
+		else if(asmMode == ASM_MODE_HEX) {
+			fileExtIn = filenameIn.substring(filenameIn.length()-4);
+			if(!fileExtIn.equals(".asm")) {
+				System.out.println("Failed to assemble. File must end in .asm: "+filenameIn);
+				System.exit(0);
+			}
+			filenameOut = filenameIn.substring(0, filenameIn.length()-4) + ".hex";
+		}
+		else { // ASM_MODE_REASSEMBLE - expecting object file (.o)
 			fileExtIn = filenameIn.substring(filenameIn.length()-2);
 			if(!fileExtIn.equals(".o")) {
 				System.out.println("Failed to re-assemble. File must end in .o: "+filenameIn);
@@ -347,8 +372,12 @@ public class Driver {
 		
 		// command line arguments are good, save to proceed
 		fileIn = new File(filenameIn);
-		if(opcode == 0) {
+		if(asmMode == ASM_MODE_BINARY) {
 			contents = assemble(fileIn);
+		}
+		else if(asmMode == ASM_MODE_HEX) {
+			contents = assemble(fileIn);
+			contents = toHex(contents);
 		}
 		else {
 			contents = reassemble(fileIn);
