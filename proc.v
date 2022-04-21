@@ -27,7 +27,7 @@ wire [15:0]fd_inst;
 wire [31:0]WB_WriteDataOut;
 wire selectJorB;
 wire [2:0]DEC_RqRd,DEC_Rs,EX_RqRd,EX_Rs;
-wire EX_flush;
+wire EX_flush,MEM_flush;
 
 //instantiate modules
 /*
