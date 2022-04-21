@@ -120,7 +120,7 @@ dflop DFF26[31:0](.q(WB_RegData), .d(MEM_RegData), .clk(clk), .rst(rst));
 dflop DFF27[31:0](.q(WB_ALU_in), .d(MEM_ALU_out), .clk(clk), .rst(rst));
 dflop DFF28(.q(WB_MemRead), .d(MEM_MemRead), .clk(clk), .rst(rst));
 dflop DFF29[2:0](.q(WB_write_reg), .d(MEM_write_reg), .clk(clk), .rst(rst));
-dflop DFF30[2:0](.q(WB_write_en), .d(MEM_write_en), .clk(clk), .rst(rst));
+dflop DFF30(.q(WB_write_en), .d(MEM_write_en), .clk(clk), .rst(rst));
 dflop DFF32(.q(WB_halt), .d(MEM_halt), .clk(clk), .rst(rst));
 dflop DFF41[15:0](.q(WB_inst_in), .d(MEM_inst_in), .clk(clk), .rst(rst)); 
 
