@@ -21,8 +21,9 @@ ECHO ///////////////////////////////////////////////////////////////////////////
 ECHO // ASSMEBLER MENU                                                                      //
 ECHO // 1 - BUILD - Recompile the assembler.                                                //
 ECHO // 2 - ASSEMBLE                                                                        //
-ECHO //       2.1 - ASSEMBLE TO BINARY - turn a .asm file to .o file.                        //
-ECHO //       2.2 - ASSEMBLE TO HEX - turn a .asm file to a .hex file.                       //
+ECHO //       2.1 - ASSEMBLE TO BINARY - Convert a .asm file to .o file.                    //
+ECHO //       2.2 - ASSEMBLE TO HEX - Convert a .asm file to a .hex file (BROKEN).          //
+ECHO //       2.3 - ASSMEBLE TO MIF - Convert a .asm file to a .mif file.                   //
 ECHO // 3 - RE-ASSEMBLE - turn a .o file to a .rsm file.                                    //
 ECHO // 0 - QUIT                                                                            //
 ECHO /////////////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +48,12 @@ IF "%cmd%" == "2.2" GOTO getFilename_asmToHex
 
 REM debug assemble to hex
 IF "%cmd%" == "2.2d" GOTO getFilename_asmToHex_debug
+
+REM assemble to mif
+IF "%cmd%" == "2.3" GOTO getFilename_asmToMif
+
+REM debug assemble to mif
+IF "%cmd%" == "2.3d" GOTO getFilename_asmToMif_debug
 
 REM re-assemble
 IF "%cmd%" == "3" GOTO getFilename_rsm
@@ -82,16 +89,28 @@ SET/P filename=Name of program to assemble (.asm):
 CMD /K "%0 asm %filename%" 1 1
 GOTO exit
 
+:getFilename_asmToMif
+REM Get name of file to assemble. Recall this script with an assembly entry point
+SET/P filename=Name of program to assemble (.asm): 
+CMD /K "%0 asm %filename%" 2 0
+GOTO exit
+
+:getFilename_asmToMif_debug
+REM Get name of file to assemble. Recall this script with an assembly entry point
+SET/P filename=Name of program to assemble (.asm): 
+CMD /K "%0 asm %filename%" 2 1
+GOTO exit
+
 :getFilename_rsm
 REM Get name of file to re-assemble. Recall this script with an assembly entry point
 SET/P filename=Name of object file to re-assemble (.o): 
-CMD /K "%0 asm %filename%" 2 0
+CMD /K "%0 asm %filename%" 3 0
 GOTO exit
 
 :getFilename_rsm_debug
 REM Get name of file to re-assemble. Recall this script with an assmembly entry point
 SET/P filename=Name of object file to re-assemble (.o): 
-CMD /K "%0 asm %filename%" 2 1
+CMD /K "%0 asm %filename%" 3 1
 GOTO exit
 
 :build

@@ -1,7 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +16,11 @@ public class Driver {
 	private static final int PC_START = 0; // address of first instruction
 	private static final int ASM_MODE_BINARY = 0; // assemble to 16 bit binary instructions
 	private static final int ASM_MODE_HEX = 1; // assemble to 4 digit hex instructions
-	private static final int ASM_MODE_REASSEMBLE = 2; // re-assemble 16 bit binary instructions
+	private static final int ASM_MODE_MIF = 2; // assemble to memory initialization format
+	private static final int ASM_MODE_REASSEMBLE = 3; // re-assemble 16 bit binary instructions
 	private static final int DEBUG_MODE_ON = 1;
 	private static final int DEBUG_MODE_OFF = 0;
+	private static final int INSTR_WIDTH = 16;
 	
 	// static fields
 	public static boolean debug = false;
@@ -260,6 +260,49 @@ public class Driver {
 		return hex;
 	}
 	
+	/*
+	 * Converts the list of 16 bit binary instructions into the contents of a 
+	 * .mif (memory initialization format) file.
+	 */
+	private static List<String> formatMIF(List<String> binary) {	
+		List<String> mif = new ArrayList<String>();
+		int numInstr = binary.size(); // actual number of instructions we will put in memory
+		int depth = 0; // max number of instructions we can fit in memory
+		int p = 0;
+		
+		// compute depth of memory (round to nearest power of 2 that can hold all instructions)
+		while(depth < numInstr) {
+			depth = (int)Math.pow(2, p);
+			++p;
+		}
+		
+		// create mif header
+		mif.add("DEPTH = "+depth+";");
+		mif.add("WIDTH = "+INSTR_WIDTH+";");
+		mif.add("");
+		mif.add("ADDRESS_RADIX = DEC;");
+		mif.add("DATA_RADIX = BIN;");
+		mif.add("");
+		mif.add("CONTENT");
+		mif.add("BEGIN");
+		mif.add("");
+		
+		// create entry for each instruction
+		for(int i = 0; i < numInstr; ++i) {
+			mif.add(i+" : "+binary.get(i)+";");
+		}
+		
+		// fill remaining memory (if any) with zeros
+		if(numInstr != depth) { // instructions don't completely fill memory?
+			mif.add("["+numInstr+".."+(depth-1)+"] : 0000000000000000;");
+		}
+		
+		// create footer
+		mif.add("END;");
+		
+		return mif;
+	}
+	
 	
 	/*
 	 * Prints each element of the contents list as its own line to the given 
@@ -297,7 +340,7 @@ public class Driver {
 	 * Expecting command line arguments:
 	 * java Driver prog.asm
 	 * 		- args[0] = filename - name of file to be operated on
-	 * 		- args[1] = asmMode - 0 for asm-to-binary, 1 for asm-to-hex, 2 for binary-to-asm
+	 * 		- args[1] = asmMode - 0 for asm-to-binary, 1 for asm-to-hex, 2 for asm-to-mif, 3 for binary reassemble
 	 * 		- args[2] = debugMode - 0 for debug off, 1 for debug on
 	 * Target file must be located in same directory as this.
 	 */
@@ -310,6 +353,7 @@ public class Driver {
 		File fileIn = null; // input file for given operation
 		File fileOut = null; // output file for given operation
 		List<String> contents = null; // contents of output file where each element is a single line of text
+		int instructionCount = 0;
 		
 		// make sure we have the right number of args
 		if(args.length != 3) {
@@ -320,7 +364,11 @@ public class Driver {
 		// get assembly mode and make sure it is valid
 		try {
 			asmMode = Integer.parseInt(args[1]);
-			if(asmMode != ASM_MODE_BINARY && asmMode != ASM_MODE_HEX && asmMode != ASM_MODE_REASSEMBLE) {
+			if(	asmMode != ASM_MODE_BINARY && 
+				asmMode != ASM_MODE_HEX && 
+				asmMode != ASM_MODE_REASSEMBLE &&
+				asmMode != ASM_MODE_MIF
+			) {
 				throw new Exception();
 			}
 		}
@@ -345,7 +393,7 @@ public class Driver {
 		
 		// get filename and make sure extension matches operation
 		filenameIn = args[0];
-		if(asmMode == ASM_MODE_BINARY) { // expecting assembly file (.asm)
+		if(asmMode == ASM_MODE_BINARY) { // expecting assembly file (.asm) outputting object file (.o)
 			fileExtIn = filenameIn.substring(filenameIn.length()-4);
 			if(!fileExtIn.equals(".asm")) {
 				System.out.println("Failed to assemble. File must end in .asm: "+filenameIn);
@@ -353,13 +401,21 @@ public class Driver {
 			}
 			filenameOut = filenameIn.substring(0, filenameIn.length()-4) + ".o";
 		}
-		else if(asmMode == ASM_MODE_HEX) {
+		else if(asmMode == ASM_MODE_HEX) { // expecting assembly file (.asm) outputting hex file (.hex)
 			fileExtIn = filenameIn.substring(filenameIn.length()-4);
 			if(!fileExtIn.equals(".asm")) {
 				System.out.println("Failed to assemble. File must end in .asm: "+filenameIn);
 				System.exit(0);
 			}
 			filenameOut = filenameIn.substring(0, filenameIn.length()-4) + ".hex";
+		}
+		else if(asmMode == ASM_MODE_MIF) { // expecting assembly file (.asm) outputting mif file (.mif)
+			fileExtIn = filenameIn.substring(filenameIn.length()-4);
+			if(!fileExtIn.equals(".asm")) {
+				System.out.println("Failed to assemble. File must end in .asm: "+filenameIn);
+				System.exit(0);
+			}
+			filenameOut = filenameIn.substring(0, filenameIn.length()-4) + ".mif";
 		}
 		else { // ASM_MODE_REASSEMBLE - expecting object file (.o)
 			fileExtIn = filenameIn.substring(filenameIn.length()-2);
@@ -374,13 +430,21 @@ public class Driver {
 		fileIn = new File(filenameIn);
 		if(asmMode == ASM_MODE_BINARY) {
 			contents = assemble(fileIn);
+			instructionCount = contents.size();
 		}
 		else if(asmMode == ASM_MODE_HEX) {
 			contents = assemble(fileIn);
+			instructionCount = contents.size();
 			contents = toHex(contents);
+		}
+		else if(asmMode == ASM_MODE_MIF) {
+			contents = assemble(fileIn);
+			instructionCount = contents.size();
+			contents = formatMIF(contents);
 		}
 		else {
 			contents = reassemble(fileIn);
+			instructionCount = contents.size();
 		}
 		
 		// print the result of the operation to a file
@@ -390,7 +454,7 @@ public class Driver {
 		
 		System.out.println("");
 		System.out.printf("%s ---> %s\n", fileIn.getName(), fileOut.getName());
-		System.out.printf("Instruction count: %d\n", contents.size());
+		System.out.printf("Instruction count: %d\n", instructionCount);
 
 		return;
 	}

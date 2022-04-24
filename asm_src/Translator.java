@@ -89,7 +89,6 @@ public class Translator {
 		String rq = "000"; // register Rq in binary
 		String imm = ""; // immediate
 		String immToken = ""; // raw immediate taken directly from assembly instruction
-		Symbol sym; // symbol pulled from symbol table
 		int commentIndex; // location in instruction of first character of the comment
 		
 		// remove comment (if any exists)
