@@ -1,12 +1,12 @@
-module fetch(clk, rst,newPC,instr,PC,PCPlus1,halt,jorb);
+module fetch(clk, rst,newPC,instr,PC,PCPlus1,halt,jorb,haltPC);
 
 
 	input clk;
 	input rst;
-	input [15:0]newPC; //what is the size of the PC?
+	input [15:0]newPC, haltPC; //what is the size of the PC?
 	input halt;
 	input jorb;
-	
+
 	output [15:0]instr;
 	output [15:0]PC;
 	output [15:0]PCPlus1;
@@ -15,8 +15,8 @@ module fetch(clk, rst,newPC,instr,PC,PCPlus1,halt,jorb);
 
 
 	// decide next pc value
-	assign nextPC = halt? PC : 
-			jorb? newPC:
+        assign nextPC = halt ? haltPC :
+			jorb ? newPC :
 			PCPlus1;
 
 
