@@ -20,6 +20,7 @@ module execute(PCIn,RqRd,Rs,instr,JumpHigh,BranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,
 	
 	wire [31:0]A,B;
 	wire EQ,LT,GT,LE,GE,NE;
+	wire [31:0]ALUOutTemp;
 	
 	
 	
@@ -29,7 +30,11 @@ module execute(PCIn,RqRd,Rs,instr,JumpHigh,BranchHigh,RqRdOrImm,RsOrImm,ALUCtrl,
 	
 	
 	// ALU instantiation
-	alu ALU0(.A(A), .B(B), .ALUCtrl(ALUCtrl), .Out(ALUOut));
+	alu ALU0(.A(A), .B(B), .ALUCtrl(ALUCtrl), .Out(ALUOutTemp));
+
+	assign ALUOut = (instr[15:12] == 4'b0110) & (instr[2:0] == 3'b001) ? {B[15:0],A[15:0]} :
+			(instr[15:12] == 4'b0110) & (instr[2:0] == 3'b000) ? {A[31:16],B[15:0]} :
+			ALUOutTemp;
 	
 	// condition codes
 	condcodes CC0(.B(B),.EQ(EQ),.LT(LT),.GT(GT),.LE(LE),.GE(GE),.NE(NE));
