@@ -1,8 +1,7 @@
-module proc(clk,rst,leds, sw);
+module proc(clk,rst,leds);
 
 input clk, rst;
-input [1:0] sw;
-output [9:0]leds;
+input [9:0]leds;
 
 //signals
 wire [15:0]FETCH_PC_out, DEC_PC_in, DEC_PC_out, EX_PC_in, 
@@ -28,7 +27,6 @@ wire [15:0]fd_inst;
 wire [31:0]WB_WriteDataOut;
 wire selectJorB;
 wire [2:0]DEC_RqRd,DEC_Rs,EX_RqRd,EX_Rs;
-wire EX_flush,MEM_flush;
 
 //instantiate modules
 /*
@@ -57,7 +55,7 @@ decode ID0(.clk(clk), .rst(rst), .PC(DEC_PC_in), .PCPlus1(DEC_PCPlus1), .inst(DE
 		 .MemWrite(DEC_MemWrite), .MemRead(DEC_MemRead), .halt(DEC_halt),
 		 .reg1_data(DEC_reg1_data), .reg2_data(DEC_reg2_data), .write_reg_out(DEC_write_reg),
 		 .write_en_out(DEC_write_en), .write_en_in(WB_write_en), .write_reg_in(WB_write_reg), .write_data(WB_RegData),
-			.RqRd(DEC_RqRd),.Rs(DEC_Rs), .leds(leds), .sw(sw));
+			.RqRd(DEC_RqRd),.Rs(DEC_Rs), .leds(leds));
 
 dflop DFF3[15:0](.q(EX_PC_in), .d(DEC_PC_out), .clk(clk), .rst(rst | MEM_flush));
 dflop DFF4[15:0](.q(EX_inst_in), .d(DEC_inst_out), .clk(clk), .rst(rst | MEM_flush));
@@ -121,7 +119,7 @@ dflop DFF26[31:0](.q(WB_RegData), .d(MEM_RegData), .clk(clk), .rst(rst));
 dflop DFF27[31:0](.q(WB_ALU_in), .d(MEM_ALU_out), .clk(clk), .rst(rst));
 dflop DFF28(.q(WB_MemRead), .d(MEM_MemRead), .clk(clk), .rst(rst));
 dflop DFF29[2:0](.q(WB_write_reg), .d(MEM_write_reg), .clk(clk), .rst(rst));
-dflop DFF30(.q(WB_write_en), .d(MEM_write_en), .clk(clk), .rst(rst));
+dflop DFF30[2:0](.q(WB_write_en), .d(MEM_write_en), .clk(clk), .rst(rst));
 dflop DFF32(.q(WB_halt), .d(MEM_halt), .clk(clk), .rst(rst));
 dflop DFF41[15:0](.q(WB_inst_in), .d(MEM_inst_in), .clk(clk), .rst(rst)); 
 

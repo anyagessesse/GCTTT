@@ -1,0 +1,29 @@
+module GCTTT(
+	input CLOCK_50,
+	input [3:0]KEY,
+	output [9:0]LEDR);
+
+
+
+//assign LEDR = 10'b1111111111;
+
+
+always @(posedge CLOCK_50, posedge KEY[0])begin
+
+	if(KEY[0])
+		LEDR = 10'b0000000000;
+
+	else
+		LEDR = LEDR + 1;
+
+end
+
+
+
+//proc p0(.clk(CLOCK_50), .rst(KEY[0]), .leds(LEDR));
+
+endmodule
+
+
+
+
