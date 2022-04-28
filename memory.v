@@ -22,7 +22,7 @@ module memory(flush, RdRqIn, ALURes, Mem_Write, MemRead,
     assign WriteRegDataOut = MemRead ? MemDataOut : ALURes;
 
     //memory stuff here :) use WriteDataIn, ALURes, Mem_Write
-    //memory2c MEM0(.data_out(data_imm), .data_in(RdRqIn[15:0]), .addr(ALURes[15:0]), .enable(1'b1), .wr(Mem_Write), .createdump(1'b0), .clk(clk), .rst(rst));
+    memory2c MEM0(.data_out(data_imm), .data_in(RdRqIn[15:0]), .addr(ALURes[15:0]), .enable(1'b1), .wr(Mem_Write), .createdump(1'b0), .clk(clk), .rst(rst));
 
   
 endmodule
