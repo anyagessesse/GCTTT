@@ -52,10 +52,12 @@ public class Translator {
 	private static final Type BRNE = new Type("BRNE", "0010", "101");
 	private static final Type J = new Type("J", "0100", "xxx");
 	// MEMORY //////////////////////////////////////////////////////////////////
+	private static final Type SP = new Type("SP", "0101", "xxx"); // set pixel
 	private static final Type LD = new Type("LD", "1000", "xxx"); // load
 	private static final Type ST = new Type("ST", "0111", "xxx"); // store
 	// SPECIAL /////////////////////////////////////////////////////////////////
 	private static final Type LDC = new Type("LDC", "1001", "xxx"); // retrieve from special purpose reg
+	private static final Type RES = new Type("RES", "0011", "xxx"); // jump to pc restore addr
 	private static final Type NOP = new Type("NOP", "0001", "xxx"); // no operation, does nothing
 	private static final Type HALT = new Type("HALT", "0000", "xxx"); // stop executing
 	// PSUEDO //////////////////////////////////////////////////////////////////
@@ -427,8 +429,8 @@ public class Translator {
 				if(debug) { System.out.println(TAB+str); }
 			}
 			// MEMORY //////////////////////////////////////////////////////////
-			else if(name.contentEquals(LD.name)) {
-				// LD Rd, Rs, imm6
+			else if(name.contentEquals(SP.name)) {
+				// SP Rd, Rs, imm6
 				// <oooo><ddd><sss><iii iii>
 				// extract registers
 				rd = getRegBinary(tokens[2].replace(",",""), lineNum);
@@ -438,22 +440,35 @@ public class Translator {
 				imm = getOffsetBinary(tokens[4].replace(",",""), lineNum);
 				
 				// compose binary
-				str = LD.opcode+rd+rs+imm;
+				str = SP.opcode+rd+rs+imm;
+				o.add(str);
+				if(debug) { System.out.println(TAB+str); }
+			}
+			else if(name.contentEquals(LD.name)) {
+				// LD Rd, imm8
+				// <oooo><ddd><x><ii iii iii>
+				// extract register
+				rd = getRegBinary(tokens[2].replace(",",""), lineNum);
+				
+				// get immediate
+				imm = getImmBinary(tokens[3].replace(",", ""), 0, 7, lineNum);
+				
+				// compose binary
+				str = LD.opcode+rd+"0"+imm;
 				o.add(str);
 				if(debug) { System.out.println(TAB+str); }
 			}
 			else if(name.contentEquals(ST.name)) {
-				// ST Rd, Rs, imm6
-				// <oooo><ddd><sss><iii iii>
+				// ST Rd, imm8
+				// <oooo><ddd><x><ii iii iii>
 				// extract registers
 				rd = getRegBinary(tokens[2].replace(",",""), lineNum);
-				rs = getRegBinary(tokens[3].replace(",",""), lineNum);
 				
 				// get immediate
-				imm = getOffsetBinary(tokens[4].replace(",",""), lineNum);
+				imm = getImmBinary(tokens[3].replace(",", ""), 0, 7, lineNum);
 				
 				// compose binary
-				str = ST.opcode+rd+rs+imm;
+				str = ST.opcode+rd+"0"+imm;
 				o.add(str);
 				if(debug) { System.out.println(TAB+str); }
 			}
@@ -466,6 +481,15 @@ public class Translator {
 				
 				// compose binary
 				str = LDC.opcode+rd+"000000000";
+				o.add(str);
+				if(debug) { System.out.println(TAB+str); }
+			}
+			else if(name.contentEquals(RES.name)) {
+				// RES
+				// <oooo><xxx xxx xxx xxx>
+				// extract register
+				// compose binary
+				str = RES.opcode+"000000000000";
 				o.add(str);
 				if(debug) { System.out.println(TAB+str); }
 			}
@@ -1037,8 +1061,8 @@ public class Translator {
 			if(debug) { System.out.println(TAB+str); }
 		}
 		// MEMORY //////////////////////////////////////////////////////////
-		else if(opcode.contentEquals(LD.opcode)) {
-			// LD Rd, Rs, imm6
+		else if(opcode.contentEquals(SP.opcode)) {
+			// SP Rd, Rs, imm6
 			// <oooo><ddd><sss><iii iii>
 			// extract registers
 			rd = getRegAsm(binary.substring(4, 7), lineNum);
@@ -1048,22 +1072,35 @@ public class Translator {
 			imm = getOffsetAsm(binary.substring(10, 16), lineNum);
 						
 			// compose assembly
-			str = LD.name+" "+rd+", "+rs+", "+imm;
+			str = SP.name+" "+rd+", "+rs+", "+imm;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(LD.opcode)) {
+			// LD Rd, imm8
+			// <oooo><ddd><x><ii iii iii>
+			// extract registers
+			rd = getRegAsm(binary.substring(4, 7), lineNum);
+						
+			// get immediate
+			imm = getOffsetAsm(binary.substring(8, 16), lineNum);
+						
+			// compose assembly
+			str = LD.name+" "+rd+", "+imm;
 			rsm.add(str);
 			if(debug) { System.out.println(TAB+str); }
 		}
 		else if(opcode.contentEquals(ST.opcode)) {
-			// ST Rd, Rs, imm6
-			// <oooo><ddd><sss><iii iii>
+			// ST Rd, imm8
+			// <oooo><ddd><x><ii iii iii>
 			// extract registers
 			rd = getRegAsm(binary.substring(4, 7), lineNum);
-			rs = getRegAsm(binary.substring(7, 10), lineNum);
 						
 			// get immediate
-			imm = getOffsetAsm(binary.substring(10, 16), lineNum);
+			imm = getOffsetAsm(binary.substring(8, 16), lineNum);
 						
 			// compose assembly
-			str = ST.name+" "+rd+", "+rs+", "+imm;
+			str = ST.name+" "+rd+", "+imm;
 			rsm.add(str);
 			if(debug) { System.out.println(TAB+str); }
 		}
@@ -1076,6 +1113,17 @@ public class Translator {
 						
 			// compose assembly
 			str = LDC.name+" "+rd;
+			rsm.add(str);
+			if(debug) { System.out.println(TAB+str); }
+		}
+		else if(opcode.contentEquals(RES.opcode)) {
+			// RES
+			// <oooo><xxx xxx xxx xxx>
+			// extract register
+			rd = getRegAsm(binary.substring(4, 7), lineNum);
+						
+			// compose assembly
+			str = RES.name;
 			rsm.add(str);
 			if(debug) { System.out.println(TAB+str); }
 		}
