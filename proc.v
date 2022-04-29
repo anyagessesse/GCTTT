@@ -1,10 +1,13 @@
-module proc(clk,rst,leds, sw, pixel_addr, pixel_value, pixel_en);
+module proc(clk,rst,leds, sw, pixel_addr, pixel_value, pixel_en, ipu_int, int_ack, grid_coord);
 
 input clk, rst;
 input [1:0] sw;
+input ipu_int;
+input [3:0]grid_coord;
 output [9:0]leds;
 output [31:0]pixel_addr;
 output pixel_en, pixel_value;
+output int_ack;
 
 //signals
 wire [15:0]FETCH_PC_out, DEC_PC_in, DEC_PC_out, EX_PC_in, 
@@ -41,13 +44,15 @@ wire halt1;
 wire writeen;
 wire nxt_stall;
 wire [15:0]stall_inst;
+wire DEC_int_done, EX_int_done, MEM_int_done, WB_int_done, int_done;
 //instantiate modules
 /*
  * FETCH
  * inputs: clk, rst, newPC
  * outputs: instr, PC, PCPlus1
  */
-fetch FETCH0(.clk(clk),.rst(rst),.newPC(EX_PC_out),.instr(FETCH_inst),.PC(FETCH_PC_out),.PCPlus1(FETCH_PCPlus1),.halt(WB_halt),.jorb(selectJorB),.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in));
+fetch FETCH0(.clk(clk),.rst(rst),.newPC(EX_PC_out),.instr(FETCH_inst),.PC(FETCH_PC_out),.PCPlus1(FETCH_PCPlus1),.halt(WB_halt),.jorb(selectJorB),
+		.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in), .ipu_int(ipu_int), .int_ack(int_ack),.int_done(WB_int_done));
 
 dflop DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt));
 assign fd_inst = (rst | EX_flush) ? 16'h1000 : WB_halt|EX_halt ? 16'h0000 :  ldStall ? DEC_inst_in : FETCH_inst;
@@ -68,7 +73,8 @@ decode ID0(.clk(clk), .rst(rst), .PC(DEC_PC_in), .PCPlus1(DEC_PCPlus1), .inst(DE
 		 .MemWrite(DEC_MemWrite), .MemRead(DEC_MemRead), .halt(DEC_halt),
 		 .reg1_data(DEC_reg1_data), .reg2_data(DEC_reg2_data), .write_reg_out(DEC_write_reg),
 		 .write_en_out(DEC_write_en), .write_en_in(WB_write_en), .write_reg_in(WB_write_reg), .write_data(WB_RegData),
-			.RqRd(DEC_RqRd),.Rs(DEC_Rs), .leds(leds), .sw(sw), .pixel_en(pixel_en), .pixel_value(pixel_value), .pixel_addr(pixel_addr));
+		 .RqRd(DEC_RqRd),.Rs(DEC_Rs), .leds(leds), .sw(sw), .pixel_en(pixel_en), .pixel_value(pixel_value), 
+                 .pixel_addr(pixel_addr),.int_done(DEC_int_done));
 
 assign ldStall = EX_MemRead & (EX_write_reg == DEC_Rs | EX_write_reg == DEC_RqRd) ? 1 : 0;
 
@@ -80,6 +86,7 @@ assign memread = ldStall? 1'b0 : DEC_MemRead;
 assign halt1 = ldStall? 1'b0 : DEC_halt;
 assign writeen = ldStall? 1'b0 : DEC_write_en;
 assign stall_inst = ldStall ? EX_inst_in : DEC_inst_out;
+assign int_done = ldStall ? 1'b0 : DEC_int_done;
 
 dflop DFF50(.q(nxt_stall), .d(ldStall), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 dflop DFF3[15:0](.q(EX_PC_in), .d(DEC_PC_out), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
@@ -98,6 +105,7 @@ dflop DFF14[2:0](.q(EX_write_reg), .d(DEC_write_reg), .clk(clk), .rst(rst | MEM_
 dflop DFF15(.q(EX_write_en), .d(writeen), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 dflop DFF43[2:0](.q(EX_RqRd), .d(DEC_RqRd), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 dflop DFF44[2:0](.q(EX_Rs), .d(DEC_Rs), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
+dflop DFF56(.q(EX_int_done), .d(int_done), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 
 
 /*
@@ -129,6 +137,7 @@ dflop DFF23[2:0](.q(MEM_write_reg), .d(EX_write_reg), .clk(clk), .rst(rst|WB_hal
 dflop DFF24(.q(MEM_write_en), .d(EX_write_en), .clk(clk), .rst(rst|WB_halt));
 dflop DFF33(.q(MEM_halt), .d(EX_halt), .clk(clk), .rst(rst|WB_halt));
 dflop DFF40[15:0](.q(MEM_inst_in), .d(EX_inst_in), .clk(clk), .rst(rst|WB_halt));
+dflop DFF57(.q(MEM_int_done), .d(EX_int_done), .clk(clk), .rst(rst|WB_halt));
 
 
 /*
@@ -138,7 +147,7 @@ dflop DFF40[15:0](.q(MEM_inst_in), .d(EX_inst_in), .clk(clk), .rst(rst|WB_halt))
  */
 memory MEM0(.flush(MEM_flush), .RdRqIn(MEM_reg1_data), .ALURes(MEM_ALU_in), 
 		.Mem_Write(MEM_MemWrite), .ALUOut(MEM_ALU_out), .MemRead(MEM_MemRead), 
-                .WriteRegDataOut(MEM_RegData), .clk(clk), .rst(rst));
+                .WriteRegDataOut(MEM_RegData), .clk(clk), .rst(rst),.Mem_Addr(MEM_inst_in[5:0]));
 
 
 
@@ -154,6 +163,7 @@ dflop DFF29[2:0](.q(WB_write_reg), .d(MEM_write_reg), .clk(clk), .rst(rst|WB_hal
 dflop DFF30(.q(WB_write_en), .d(MEM_write_en), .clk(clk), .rst(rst|WB_halt));
 dflop DFF32(.q(WB_halt), .d(WBMEMhalt), .clk(clk), .rst(rst));
 dflop DFF41[15:0](.q(WB_inst_in), .d(MEM_inst_in), .clk(clk), .rst(rst|WB_halt)); 
+dflop DFF58(.q(WB_int_done), .d(MEM_int_done), .clk(clk), .rst(rst|WB_halt));
 
 /* WRITEBACK
  * inputs: PC, ALURes, MemRead, MemReadDataIn, write_reg, write_en
