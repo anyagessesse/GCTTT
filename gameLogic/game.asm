@@ -42,13 +42,404 @@ _ENTER
 MOV R0 MAIN						# jump to main
 J R0
 ################################################################################
+_INITIAL_BOARD
+# TODO load all 111's to the boad (MEMORY 1-9)
 
 _HANDLER
 ################################################################################
 # The one and only interrupt handler. Saves selected grid space to memory.
 # Asserts the new userInputAvailable flag.
 RES								# resume operation
+# R0
+# R1 = Jump Address 1
+# R2 = SUB to determine Grid number
+# R3 = Jump Address 2
+# R4 = defined grid #
+# R5 = Which player (001 / 010) shown on the board
+# R6 = Load Grid Number From IPU 
+
+def Grid1      0     # 0000
+def Grid2      4     # 0100
+def Grid3      8     # 1000
+def Grid4      1     # 0001
+def Grid5      5     # 0101
+def Grid6      9     # 1001
+def Grid7      2     # 0010
+def Grid8      6     # 0110
+def Grid9      10    # 1010
+
+# STEP 1: Determine which player is the current player & update the player for next turn
+LD R0, MEMORY0 # Load current player to the R0 (Assume it's 0 (player 1))
+MOV R1 CURRENT_PLAYER2
+BRNE R0, R1 
+# current player is player 1 
+MOV R5, 001
+MOV R0, 1         # next player is player2
+ST R0, MEMORY0  
+MOV R3, STEP2
+J R3 
+
+_CURRENT_PLAYER2
+# current player is player 2
+MOV R5, 010
+MOV R0, 0         # next player is player1
+ST R0, MEMORY0    # update player for next turn (update to be player 1)
+
+
+_STEP2
+# STEP2: Determine which grid is the input grid & update the according board grid based on the known player and grid #
+LDC R6
+MOV R3, CHECKWINNER
+# Determine Grid #
+MOV R4, Grid1
+SUB R2, R6, R4
+MOV R1, GRIDCASE2
+BRNE R2, R1
+# the input grid number is grid 1 
+ST R5, MEMORY1
+J R3
+
+_GRIDCASE2
+MOV R4, Grid2
+SUB R2, R6, R4
+MOV R1, GRIDCASE3
+BRNE R2, R1
+# the input grid number is grid 2 
+ST R5, MEMORY2
+J R3
+
+_GRIDCASE3
+MOV R4, Grid3
+SUB R2, R6, R4
+MOV R1, GRIDCASE4
+BRNE R2, R1
+# the input grid number is grid 3 
+ST R5, MEMORY3
+J R3
+
+_GRIDCASE4
+MOV R4, Grid4
+SUB R2, R6, R4
+MOV R1, GRIDCASE5
+BRNE R2, R1
+# the input grid number is grid 4 
+ST R5, MEMORY4
+J R3
+
+_GRIDCASE5
+MOV R4, Grid5
+SUB R2, R6, R4
+MOV R1, GRIDCASE6
+BRNE R2, R1
+# the input grid number is grid 5 
+ST R5, MEMORY5
+J R3
+
+_GRIDCASE6
+MOV R4, Grid6
+SUB R2, R6, R4
+MOV R1, GRIDCASE7
+BRNE R2, R1
+# the input grid number is grid 6
+ST R5, MEMORY6
+J R3
+
+_GRIDCASE7
+MOV R4, Grid7
+SUB R2, R6, R4
+MOV R1, GRIDCASE8
+BRNE R2, R1
+# the input grid number is grid 7
+ST R5, MEMORY7
+J R3
+
+_GRIDCASE8
+MOV R4, Grid8
+SUB R2, R6, R4
+MOV R1, GRIDCASE9
+BRNE R2, R1
+# the input grid number is grid 8
+ST R5, MEMORY8
+J R3
+
+_GRIDCASE9
+# the input grid number is grid 9
+ST R5, MEMORY9
+J R3
+
+
 ################################################################################
+
+
+_CHECKWINNER
+################################################################################
+#Grid Number:
+# 1 2 3
+# 4 5 6
+# 7 8 9 
+def MEMORY0      0       # Memory 0 = Current Player  0: Player1 1: Player2
+def MEMORY1      1       # Memory 1 = Grid 1          111:Empty  001:Player1 010:Player2
+def MEMORY2      2       # Memory 2 = Grid 2
+def MEMORY3      3       # Memory 3 = Grid 3
+def MEMORY4      4       # Memory 4 = Grid 4
+def MEMORY5      5       # Memory 5 = Grid 5
+def MEMORY6      6       # Memory 6 = Grid 6
+def MEMORY7      7       # Memory 7 = Grid 7
+def MEMORY8      8       # Memory 8 = Grid 8
+def MEMORY9      9       # Memory 9 = Grid 9
+
+
+
+
+# CASE 1: Check ROW1
+_ROW1_PLAYER1
+# logic shift right ->check zero ->
+# Check Case 1: Row 1
+LD R1, MEMORY1 # Load Grid 1, 2, 3 to the R1, R2, R3
+LD R2, MEMORY2 
+LD R3, MEMORY3
+# Check if this row is all 1's
+MOV R4, 1         # shift ONE bit
+SHRL R5, R1, R4   # shift Grid 1 to the right by 1 bit
+MOV R6, ROW1_PLAYER2
+BRNE R5, R6       # check if Grid 1 != 0 (After shift)(Player 1)? ROW1_PLAYER2 : keep check ROW1_PLAYER1
+SHRL R5, R2, R4   # shift Grid 2 to the right by 1 bit
+BRNE R5, R6       # check if Grid 2 != 0 (Player 1)? ROW1_PLAYER2 : keep check ROW1_PLAYER1
+SHRL R5, R3, R4   # shift Grid 3 to the right by 1 bit
+BRNE R5, R6       # check if Grid 3 != 0 (Player 1)? ROW1_PLAYER2 : keep check ROW1_PLAYER1
+MOV R6, PLAYER1_WIN
+J R6              # Player 1 win at Row 1
+
+_ROW1_PLAYER2 #
+MOV R4, 2         # shift TWO bits
+SHRL R5, R1, R4   # shift Grid 1 to the right by 2 bits
+MOV R6, ROW2_PLAYER1
+BRNE R5, R6       # check if Grid 1 != 0 (After shift)(Player 2)? ROW2_PLAYER1 : keep check ROW1_PLAYER2
+SHRL R5, R2, R4   # shift Grid 2 to the right by 2 bits
+BRNE R5, R6       # check if Grid 2 != 0 (Player 2)? ROW2_PLAYER1 : keep check ROW1_PLAYER2
+SHRL R5, R3, R4   # shift Grid 3 to the right by 2 bits
+BRNE R5, R6       # check if Grid 3 != 0 (Player 2)? ROW2_PLAYER1 : keep check ROW1_PLAYER2
+MOV R6, PLAYER2_WIN
+J R6              # Player 2 win at Row 1
+
+
+# CASE 2: Check ROW2
+_ROW2_PLAYER1
+LD R1, MEMORY4 # Load Grid 4, 5, 6 to the R1, R2, R3
+LD R2, MEMORY5 
+LD R3, MEMORY6
+# Check if this row is all 1's
+MOV R4, 1         # shift ONE bit
+SHRL R5, R1, R4   # shift Grid 4 to the right by 1 bit
+MOV R6, ROW2_PLAYER2
+BRNE R5, R6       # check if Grid 4 != 0 (After shift)(Player 1)? ROW2_PLAYER2 : keep check ROW2_PLAYER1
+SHRL R5, R2, R4   # shift Grid 5 to the right by 1 bit
+BRNE R5, R6       # check if Grid 5 != 0 (Player 1)? ROW2_PLAYER2 : keep check ROW2_PLAYER1
+SHRL R5, R3, R4   # shift Grid 6 to the right by 1 bit
+BRNE R5, R6       # check if Grid 6 != 0 (Player 1)? ROW2_PLAYER2 : keep check ROW2_PLAYER1
+MOV R6, PLAYER1_WIN
+J R6              # Player 1 win at Row 1
+
+_ROW2_PLAYER2
+MOV R4, 2         # shift TWO bits
+SHRL R5, R1, R4   # shift Grid 4 to the right by 2 bits
+MOV R6, ROW3_PLAYER1
+BRNE R5, R6       # check if Grid 4 != 0 (After shift)(Player 2)? ROW3_PLAYER1 : keep check ROW2_PLAYER2
+SHRL R5, R2, R4   # shift Grid 5 to the right by 2 bits
+BRNE R5, R6       # check if Grid 5 != 0 (Player 2)? ROW3_PLAYER1 : keep check ROW2_PLAYER2
+SHRL R5, R3, R4   # shift Grid 6 to the right by 2 bits
+BRNE R5, R6       # check if Grid 6 != 0 (Player 2)? ROW3_PLAYER1 : keep check ROW2_PLAYER2
+MOV R6, PLAYER2_WIN
+J R6              # Player 2 win at Row 2
+
+# CASE 3: Check ROW3
+_ROW3_PLAYER1
+LD R1, MEMORY7 # Load Grid 7, 8, 9 to the R1, R2, R3
+LD R2, MEMORY8 
+LD R3, MEMORY9
+# Check if this row is all 1's
+MOV R4, 1         # shift ONE bit
+SHRL R5, R1, R4   # shift Grid 7 to the right by 1 bit
+MOV R6, ROW3_PLAYER2
+BRNE R5, R6       # check if Grid 7 != 0 (After shift)(Player 1)? ROW3_PLAYER2 : keep check ROW3_PLAYER1
+SHRL R5, R2, R4   # shift Grid 8 to the right by 1 bit
+BRNE R5, R6       # check if Grid 8 != 0 (Player 1)? ROW3_PLAYER2 : keep check ROW3_PLAYER1
+SHRL R5, R3, R4   # shift Grid 9 to the right by 1 bit
+BRNE R5, R6       # check if Grid 9 != 0 (Player 1)? ROW3_PLAYER2 : keep check ROW3_PLAYER1
+MOV R6, PLAYER1_WIN
+J R6              # Player 1 win at Row 1
+
+_ROW3_PLAYER2
+MOV R4, 2         # shift TWO bits
+SHRL R5, R1, R4   # shift Grid 7 to the right by 2 bits
+MOV R6, COL1_PLAYER1
+BRNE R5, R6       # check if Grid 7 != 0 (After shift)(Player 2)? COL1_PLAYER1 : keep check ROW3_PLAYER2
+SHRL R5, R2, R4   # shift Grid 8 to the right by 2 bits
+BRNE R5, R6       # check if Grid 8 != 0 (Player 2)? COL1_PLAYER1 : keep check ROW3_PLAYER2
+SHRL R5, R3, R4   # shift Grid 9 to the right by 2 bits
+BRNE R5, R6       # check if Grid 9 != 0 (Player 2)? COL1_PLAYER1 : keep check ROW3_PLAYER2
+MOV R6, PLAYER2_WIN
+J R6              # Player 2 win at Row 3
+
+
+# CASE 4: Check COL1
+_COL1_PLAYER1
+LD R1, MEMORY1 # Load Grid 1, 4, 7 to the R1, R2, R3
+LD R2, MEMORY4 
+LD R3, MEMORY7
+# Check if this row is all 1's
+MOV R4, 1         # shift ONE bit
+SHRL R5, R1, R4   # shift Grid 1 to the right by 1 bit
+MOV R6, COL1_PLAYER2
+BRNE R5, R6       # check if Grid 1 != 0 (After shift)(Player 1)? COL1_PLAYER2 : keep check COL1_PLAYER1
+SHRL R5, R2, R4   # shift Grid 4 to the right by 1 bit
+BRNE R5, R6       # check if Grid 4 != 0 (Player 1)? COL1_PLAYER2 : keep check COL1_PLAYER1
+SHRL R5, R3, R4   # shift Grid 7 to the right by 1 bit
+BRNE R5, R6       # check if Grid 7 != 0 (Player 1)? COL1_PLAYER2 : keep check COL1_PLAYER1
+MOV R6, PLAYER1_WIN
+J R6              # Player 1 win at COL 1
+
+_COL1_PLAYER2
+MOV R4, 2         # shift TWO bits
+SHRL R5, R1, R4   # shift Grid 1 to the right by 2 bits
+MOV R6, COL2_PLAYER1
+BRNE R5, R6       # check if Grid 1 != 0 (After shift)(Player 2)? COL2_PLAYER1 : keep check COL1_PLAYER2
+SHRL R5, R2, R4   # shift Grid 4 to the right by 2 bits
+BRNE R5, R6       # check if Grid 4 != 0 (Player 2)? COL2_PLAYER1 : keep check COL1_PLAYER2
+SHRL R5, R3, R4   # shift Grid 7 to the right by 2 bits
+BRNE R5, R6       # check if Grid 7 != 0 (Player 2)? COL2_PLAYER1 : keep check COL1_PLAYER2
+MOV R6, PLAYER2_WIN
+J R6              # Player 2 win at COL 1
+
+
+# CASE 5: Check COL2
+_COL2_PLAYER1
+LD R1, MEMORY2 # Load Grid 2, 5, 8 to the R1, R2, R3
+LD R2, MEMORY5 
+LD R3, MEMORY8
+# Check if this row is all 1's
+MOV R4, 1         # shift ONE bit
+SHRL R5, R1, R4   # shift Grid 2 to the right by 1 bit
+MOV R6, COL2_PLAYER2
+BRNE R5, R6       # check if Grid 2 != 0 (After shift)(Player 1)? COL2_PLAYER2 : keep check COL2_PLAYER1
+SHRL R5, R2, R4   # shift Grid 5 to the right by 1 bit
+BRNE R5, R6       # check if Grid 5 != 0 (Player 1)? COL2_PLAYER2 : keep check COL2_PLAYER1
+SHRL R5, R3, R4   # shift Grid 8 to the right by 1 bit
+BRNE R5, R6       # check if Grid 8 != 0 (Player 1)? COL2_PLAYER2 : keep check COL2_PLAYER1
+MOV R6, PLAYER1_WIN
+J R6              # Player 1 win at COL 2
+
+_COL2_PLAYER2
+MOV R4, 2         # shift TWO bits
+SHRL R5, R1, R4   # shift Grid 2 to the right by 2 bits
+MOV R6, COL3_PLAYER1
+BRNE R5, R6       # check if Grid 2 != 0 (After shift)(Player 2)? COL3_PLAYER1 : keep check COL2_PLAYER2
+SHRL R5, R2, R4   # shift Grid 5 to the right by 2 bits
+BRNE R5, R6       # check if Grid 5 != 0 (Player 2)? COL3_PLAYER1 : keep check COL2_PLAYER2
+SHRL R5, R3, R4   # shift Grid 8 to the right by 2 bits
+BRNE R5, R6       # check if Grid 8 != 0 (Player 2)? COL3_PLAYER1 : keep check COL2_PLAYER2
+MOV R6, PLAYER2_WIN
+J R6              # Player 2 win at COL 2
+
+
+# CASE 6: Check COL3
+_COL3_PLAYER1
+LD R1, MEMORY3 # Load Grid 3, 6, 9 to the R1, R2, R3
+LD R2, MEMORY6 
+LD R3, MEMORY9
+# Check if this row is all 1's
+MOV R4, 1         # shift ONE bit
+SHRL R5, R1, R4   # shift Grid 3 to the right by 1 bit
+MOV R6, COL3_PLAYER2
+BRNE R5, R6       # check if Grid 3 != 0 (After shift)(Player 1)? COL3_PLAYER2 : keep check COL3_PLAYER1
+SHRL R5, R2, R4   # shift Grid 6 to the right by 1 bit
+BRNE R5, R6       # check if Grid 6 != 0 (Player 1)? COL3_PLAYER2 : keep check COL3_PLAYER1
+SHRL R5, R3, R4   # shift Grid 9 to the right by 1 bit
+BRNE R5, R6       # check if Grid 9 != 0 (Player 1)? COL3_PLAYER2 : keep check COL3_PLAYER1
+MOV R6, PLAYER1_WIN
+J R6              # Player 1 win at COL 3
+
+
+_COL3_PLAYER2
+MOV R4, 2         # shift TWO bits
+SHRL R5, R1, R4   # shift Grid 3 to the right by 2 bits
+MOV R6, DIAG1_PLAYER1
+BRNE R5, R6       # check if Grid 3 != 0 (After shift)(Player 2)? DIAG1_PLAYER1 : keep check COL3_PLAYER2
+SHRL R5, R2, R4   # shift Grid 6 to the right by 2 bits
+BRNE R5, R6       # check if Grid 6 != 0 (Player 2)? DIAG1_PLAYER1 : keep check COL3_PLAYER2
+SHRL R5, R3, R4   # shift Grid 9 to the right by 2 bits
+BRNE R5, R6       # check if Grid 9 != 0 (Player 2)? DIAG1_PLAYER1 : keep check COL3_PLAYER2
+MOV R6, PLAYER2_WIN
+J R6              # Player 2 win at COL 3
+
+
+_DIAG1_PLAYER1
+LD R1, MEMORY1 # Load Grid 1, 5, 9 to the R1, R2, R3
+LD R2, MEMORY5 
+LD R3, MEMORY9
+# Check if this row is all 1's
+MOV R4, 1         # shift ONE bit
+SHRL R5, R1, R4   # shift Grid 1 to the right by 1 bit
+MOV R6, DIAG1_PLAYER2
+BRNE R5, R6       # check if Grid 1 != 0 (After shift)(Player 1)? DIAG1_PLAYER2 : keep check DIAG1_PLAYER1
+SHRL R5, R2, R4   # shift Grid 5 to the right by 1 bit
+BRNE R5, R6       # check if Grid 5 != 0 (Player 1)? DIAG1_PLAYER2 : keep check DIAG1_PLAYER1
+SHRL R5, R3, R4   # shift Grid 9 to the right by 1 bit
+BRNE R5, R6       # check if Grid 9 != 0 (Player 1)? DIAG1_PLAYER2 : keep check DIAG1_PLAYER1
+MOV R6, PLAYER1_WIN
+J R6              # Player 1 win at DIAG 1
+
+_DIAG1_PLAYER2
+MOV R4, 2         # shift TWO bits
+SHRL R5, R1, R4   # shift Grid 1 to the right by 2 bits
+MOV R6, DIAG2_PLAYER1
+BRNE R5, R6       # check if Grid 1 != 0 (After shift)(Player 2)? DIAG2_PLAYER1 : keep check DIAG1_PLAYER2
+SHRL R5, R2, R4   # shift Grid 5 to the right by 2 bits
+BRNE R5, R6       # check if Grid 5 != 0 (Player 2)? DIAG2_PLAYER1 : keep check DIAG1_PLAYER2
+SHRL R5, R3, R4   # shift Grid 9 to the right by 2 bits
+BRNE R5, R6       # check if Grid 9 != 0 (Player 2)? DIAG2_PLAYER1 : keep check DIAG1_PLAYER2
+MOV R6, PLAYER2_WIN
+J R6              # Player 2 win at DIAG 1
+
+
+
+_DIAG2_PLAYER1
+LD R1, MEMORY3 # Load Grid 3, 5, 7 to the R1, R2, R3
+LD R2, MEMORY5 
+LD R3, MEMORY7
+# Check if this row is all 1's
+MOV R4, 1         # shift ONE bit
+SHRL R5, R1, R4   # shift Grid 3 to the right by 1 bit
+MOV R6, DIAG2_PLAYER2
+BRNE R5, R6       # check if Grid 3 != 0 (After shift)(Player 1)? DIAG2_PLAYER2 : keep check DIAG2_PLAYER1
+SHRL R5, R2, R4   # shift Grid 5 to the right by 1 bit
+BRNE R5, R6       # check if Grid 5 != 0 (Player 1)? DIAG2_PLAYER2 : keep check DIAG2_PLAYER1
+SHRL R5, R3, R4   # shift Grid 7 to the right by 1 bit
+BRNE R5, R6       # check if Grid 7 != 0 (Player 1)? DIAG2_PLAYER2 : keep check DIAG2_PLAYER1
+MOV R6, PLAYER1_WIN
+J R6              # Player 1 win at DIAG 2
+
+_DIAG2_PLAYER2
+MOV R4, 2         # shift TWO bits
+SHRL R5, R1, R4   # shift Grid 3 to the right by 2 bits
+MOV R6,  GAME_CONTINUE 
+BRNE R5, R6       # check if Grid 3 != 0 (After shift)(Player 2)? GAME_CONTINUE : keep check DIAG2_PLAYER2
+SHRL R5, R2, R4   # shift Grid 5 to the right by 2 bits
+BRNE R5, R6       # check if Grid 5 != 0 (Player 2)? GAME_CONTINUE : keep check DIAG2_PLAYER2
+SHRL R5, R3, R4   # shift Grid 7 to the right by 2 bits
+BRNE R5, R6       # check if Grid 7 != 0 (Player 2)? GAME_CONTINUE : keep check DIAG2_PLAYER2
+MOV R6, PLAYER2_WIN
+J R6              # Player 2 win at DIAG 2
+
+_PLAYER1_WIN
+# TODO
+_PLAYER2_WIN
+# TODO
+_GAME_CONTINUE
+# TODO
+# TIE_SCENARIO
+################################################################################
+
 
 _DRAW_X
 ################################################################################
