@@ -1,14 +1,18 @@
-module write(ALURes, MemReadDataIn, MemRead);
+module write(ALURes, WriteDataIn, MemRead, read_coord, grid_coord, FinalRegWriteData);
   
   //input [15:0]PC;
   input [31:0]ALURes;
-  input [31:0]MemReadDataIn;
+  input [31:0]WriteDataIn;
   input MemRead; // signal to determine if memory data needs to be written to register
+  input read_coord;
+  input [3:0]grid_coord;
+
+  output [31:0]FinalRegWriteData;
   
   //output [15:0]PCNew;
 
-  wire [31:0]read1_data, read2_data;
-  wire [31:0]WriteDataOut;
+  assign FinalRegWriteData = read_coord ? {27'b0,grid_coord} : WriteDataIn;
+  
 
   //pass values through
  // assign PCNew = PC;

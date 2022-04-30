@@ -44,7 +44,9 @@ wire halt1;
 wire writeen;
 wire nxt_stall;
 wire [15:0]stall_inst;
-wire DEC_int_done, EX_int_done, MEM_int_done, WB_int_done, int_done;
+wire DEC_read_coord, EX_read_coord, MEM_read_coord, WB_read_coord, read_coord;
+wire [3:0]EX_grid_coord, MEM_grid_coord, WB_grid_coord;
+wire [31:0]FinalRegWriteData;
 //instantiate modules
 /*
  * FETCH
@@ -52,7 +54,7 @@ wire DEC_int_done, EX_int_done, MEM_int_done, WB_int_done, int_done;
  * outputs: instr, PC, PCPlus1
  */
 fetch FETCH0(.clk(clk),.rst(rst),.newPC(EX_PC_out),.instr(FETCH_inst),.PC(FETCH_PC_out),.PCPlus1(FETCH_PCPlus1),.halt(WB_halt),.jorb(selectJorB),
-		.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in), .ipu_int(ipu_int), .int_ack(int_ack),.int_done(WB_int_done));
+		.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in), .ipu_int(ipu_int), .int_ack(int_ack));
 
 dflop DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt));
 assign fd_inst = (rst | EX_flush) ? 16'h1000 : WB_halt|EX_halt ? 16'h0000 :  ldStall ? DEC_inst_in : FETCH_inst;
@@ -72,9 +74,9 @@ decode ID0(.clk(clk), .rst(rst), .PC(DEC_PC_in), .PCPlus1(DEC_PCPlus1), .inst(DE
 		 .RqRdOrImm(DEC_RqRdOrImm), .RsOrImm(DEC_RsOrImm), .ALUCtrl(DEC_ALUCtrl), 
 		 .MemWrite(DEC_MemWrite), .MemRead(DEC_MemRead), .halt(DEC_halt),
 		 .reg1_data(DEC_reg1_data), .reg2_data(DEC_reg2_data), .write_reg_out(DEC_write_reg),
-		 .write_en_out(DEC_write_en), .write_en_in(WB_write_en), .write_reg_in(WB_write_reg), .write_data(WB_RegData),
+		 .write_en_out(DEC_write_en), .write_en_in(WB_write_en), .write_reg_in(WB_write_reg), .write_data(FinalRegWriteData),
 		 .RqRd(DEC_RqRd),.Rs(DEC_Rs), .leds(leds), .sw(sw), .pixel_en(pixel_en), .pixel_value(pixel_value), 
-                 .pixel_addr(pixel_addr),.int_done(DEC_int_done));
+                 .pixel_addr(pixel_addr),.read_coord(DEC_read_coord));
 
 assign ldStall = EX_MemRead & (EX_write_reg == DEC_Rs | EX_write_reg == DEC_RqRd) ? 1 : 0;
 
@@ -86,7 +88,7 @@ assign memread = ldStall? 1'b0 : DEC_MemRead;
 assign halt1 = ldStall? 1'b0 : DEC_halt;
 assign writeen = ldStall? 1'b0 : DEC_write_en;
 assign stall_inst = ldStall ? EX_inst_in : DEC_inst_out;
-assign int_done = ldStall ? 1'b0 : DEC_int_done;
+assign read_coord = ldStall ? 1'b0 : DEC_read_coord;
 
 dflop DFF50(.q(nxt_stall), .d(ldStall), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 dflop DFF3[15:0](.q(EX_PC_in), .d(DEC_PC_out), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
@@ -105,7 +107,10 @@ dflop DFF14[2:0](.q(EX_write_reg), .d(DEC_write_reg), .clk(clk), .rst(rst | MEM_
 dflop DFF15(.q(EX_write_en), .d(writeen), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 dflop DFF43[2:0](.q(EX_RqRd), .d(DEC_RqRd), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 dflop DFF44[2:0](.q(EX_Rs), .d(DEC_Rs), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
-dflop DFF56(.q(EX_int_done), .d(int_done), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
+
+//read coordinate from special reg
+dflop DFF57[3:0](.q(EX_grid_coord), .d(grid_coord), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
+dflop DFF58(.q(EX_read_coord), .d(read_coord), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 
 
 /*
@@ -116,7 +121,7 @@ dflop DFF56(.q(EX_int_done), .d(int_done), .clk(clk), .rst(rst | MEM_flush|WB_ha
  */
 
 
-ALUForward ALUF0(.WB_RdData_in(WB_RegData),.MEM_RdData_in(MEM_RegData),.RqRdData(EX_reg1_data),.RsData(EX_reg2_data),.WB_Rd_in(WB_inst_in[11:9]),.MEM_Rd_in(MEM_inst_in[11:9]),.RqRd(EX_RqRd),.Rs(EX_Rs),.PrevWriteEn(MEM_write_en),.PrevPrevWriteEn(WB_write_en),.PrevMemRead(MEM_MemRead),.PrevPrevMemRead(WB_MemRead),.fRqRdData(fRqRdData),.fRsData(fRsData));
+ALUForward ALUF0(.WB_RdData_in(FinalRegWriteData),.MEM_RdData_in(MEM_RegData),.RqRdData(EX_reg1_data),.RsData(EX_reg2_data),.WB_Rd_in(WB_inst_in[11:9]),.MEM_Rd_in(MEM_inst_in[11:9]),.RqRd(EX_RqRd),.Rs(EX_Rs),.PrevWriteEn(MEM_write_en),.PrevPrevWriteEn(WB_write_en),.PrevMemRead(MEM_MemRead),.PrevPrevMemRead(WB_MemRead),.fRqRdData(fRqRdData),.fRsData(fRsData));
 
 
 execute EX0(.PCIn(EX_PC_in),.RqRd(fRqRdData),.Rs(fRsData),
@@ -137,7 +142,10 @@ dflop DFF23[2:0](.q(MEM_write_reg), .d(EX_write_reg), .clk(clk), .rst(rst|WB_hal
 dflop DFF24(.q(MEM_write_en), .d(EX_write_en), .clk(clk), .rst(rst|WB_halt));
 dflop DFF33(.q(MEM_halt), .d(EX_halt), .clk(clk), .rst(rst|WB_halt));
 dflop DFF40[15:0](.q(MEM_inst_in), .d(EX_inst_in), .clk(clk), .rst(rst|WB_halt));
-dflop DFF57(.q(MEM_int_done), .d(EX_int_done), .clk(clk), .rst(rst|WB_halt));
+
+//read coord from special reg
+dff DFF59[3:0](.q(MEM_grid_coord), .d(EX_grid_coord), .clk(clk), .rst(rst|WB_halt));
+dff DFFF60(.q(MEM_read_coord), .d(EX_read_coord), .clk(clk), .rst(rst|WB_halt));
 
 
 /*
@@ -163,13 +171,17 @@ dflop DFF29[2:0](.q(WB_write_reg), .d(MEM_write_reg), .clk(clk), .rst(rst|WB_hal
 dflop DFF30(.q(WB_write_en), .d(MEM_write_en), .clk(clk), .rst(rst|WB_halt));
 dflop DFF32(.q(WB_halt), .d(WBMEMhalt), .clk(clk), .rst(rst));
 dflop DFF41[15:0](.q(WB_inst_in), .d(MEM_inst_in), .clk(clk), .rst(rst|WB_halt)); 
-dflop DFF58(.q(WB_int_done), .d(MEM_int_done), .clk(clk), .rst(rst|WB_halt));
+
+//read coord from special reg
+dflop DFF61[3:0](.q(WB_grid_coord), .d(MEM_grid_coord), .clk(clk), .rst(rst|WB_halt));
+dflop DFF62(.q(WB_read_coord), .d(MEM_read_coord), .clk(clk), .rst(rst|WB_halt));
 
 /* WRITEBACK
  * inputs: PC, ALURes, MemRead, MemReadDataIn, write_reg, write_en
  * outputs: PCNew, WriteDataOut, WriteRegOut, write_en_out
  */
-write WB0(.ALURes(WB_ALU_in), .MemReadDataIn(WB_RegData), .MemRead(WB_MemRead));
+write WB0(.ALURes(WB_ALU_in), .WriteDataIn(WB_RegData), .MemRead(WB_MemRead),
+		.read_coord(WB_read_coord),.grid_coord(WB_grid_coord),.FinalRegWriteData(FinalRegWriteData));
 
 
 endmodule
