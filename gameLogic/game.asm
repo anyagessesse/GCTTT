@@ -226,8 +226,10 @@ BRLE R5 R4						# keep looping
 # draw the left side of the O
 # initialize the for loop
 OR R0 R2 R2						# restore starting addr 
-MOV R2 O_HEIGHT					# compute ending addr 
+MOV R2 O_WIDTH					# compute ending addr 
 SUB R0 R0 R2					# based on starting addr
+MOV R2 O_HEIGHT
+SUB R0 R0 R2
 ADD R2 R0 R2
 MOV R3 640						# set increment to move pixel addr vertically v
 MOV R4 DRAW_O_LEFT_FOR			# prepare looping addr
