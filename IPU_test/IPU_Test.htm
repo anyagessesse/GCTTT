@@ -1,0 +1,395 @@
+<html>
+<body>
+<h1 align="center">DE1 SoC Board Configuration</h1>
+<br />
+<br />
+<h2 align="left">Pin Assignments:</h2>
+<ul>
+<a href="#CLOCK"><li>CLOCK</li></a>
+<br />
+<a href="#KEY"><li>KEY</li></a>
+<br />
+<a href="#LED"><li>LED</li></a>
+<br />
+<a href="#SW"><li>SW</li></a>
+<br />
+<a href="#GPIO_1"><li>GPIO_1</li></a>
+<br />
+</ul>
+<br />
+<br />
+<br />
+<h2 align="left">Pin Assignment Table:</h2>
+<h2><a name="CLOCK"></a></h2><table border="3">
+<caption  align="left">CLOCK</caption>
+<br />
+<br />
+<tr>
+   <th align="left" bgcolor="Khaki">Name</th>
+   <th align="left" bgcolor="Khaki">Location</th>
+   <th align="left" bgcolor="Khaki">Direction</th>
+   <th align="left" bgcolor="Khaki">Standard</th>
+</tr>
+<tr>
+   <td align="left">CLOCK2_50</td>
+   <td align="left">AA16</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">CLOCK3_50</td>
+   <td align="left">Y26</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">CLOCK4_50</td>
+   <td align="left">K14</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">CLOCK_50</td>
+   <td align="left">AF14</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+</table>
+<h2><a name="KEY"></a></h2><table border="3">
+<caption  align="left">KEY</caption>
+<br />
+<br />
+<tr>
+   <th align="left" bgcolor="Khaki">Name</th>
+   <th align="left" bgcolor="Khaki">Location</th>
+   <th align="left" bgcolor="Khaki">Direction</th>
+   <th align="left" bgcolor="Khaki">Standard</th>
+</tr>
+<tr>
+   <td align="left">KEY[0]</td>
+   <td align="left">AA14</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">KEY[1]</td>
+   <td align="left">AA15</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">KEY[2]</td>
+   <td align="left">W15</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">KEY[3]</td>
+   <td align="left">Y16</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+</table>
+<h2><a name="LED"></a></h2><table border="3">
+<caption  align="left">LED</caption>
+<br />
+<br />
+<tr>
+   <th align="left" bgcolor="Khaki">Name</th>
+   <th align="left" bgcolor="Khaki">Location</th>
+   <th align="left" bgcolor="Khaki">Direction</th>
+   <th align="left" bgcolor="Khaki">Standard</th>
+</tr>
+<tr>
+   <td align="left">LEDR[0]</td>
+   <td align="left">V16</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">LEDR[1]</td>
+   <td align="left">W16</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">LEDR[2]</td>
+   <td align="left">V17</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">LEDR[3]</td>
+   <td align="left">V18</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">LEDR[4]</td>
+   <td align="left">W17</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">LEDR[5]</td>
+   <td align="left">W19</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">LEDR[6]</td>
+   <td align="left">Y19</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">LEDR[7]</td>
+   <td align="left">W20</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">LEDR[8]</td>
+   <td align="left">W21</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">LEDR[9]</td>
+   <td align="left">Y21</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+</table>
+<h2><a name="SW"></a></h2><table border="3">
+<caption  align="left">SW</caption>
+<br />
+<br />
+<tr>
+   <th align="left" bgcolor="Khaki">Name</th>
+   <th align="left" bgcolor="Khaki">Location</th>
+   <th align="left" bgcolor="Khaki">Direction</th>
+   <th align="left" bgcolor="Khaki">Standard</th>
+</tr>
+<tr>
+   <td align="left">SW[0]</td>
+   <td align="left">AB12</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">SW[1]</td>
+   <td align="left">AC12</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">SW[2]</td>
+   <td align="left">AF9</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">SW[3]</td>
+   <td align="left">AF10</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">SW[4]</td>
+   <td align="left">AD11</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">SW[5]</td>
+   <td align="left">AD12</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">SW[6]</td>
+   <td align="left">AE11</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">SW[7]</td>
+   <td align="left">AC9</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">SW[8]</td>
+   <td align="left">AD10</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+<tr>
+   <td align="left">SW[9]</td>
+   <td align="left">AE12</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+</tr>
+</table>
+<h2><a name="GPIO_1"></a></h2><table border="3">
+<caption  align="left">GPIO_1 connect to D5M - 5M Pixel Camera</caption>
+<br />
+<br />
+<tr>
+   <th align="left" bgcolor="Khaki">Name</th>
+   <th align="left" bgcolor="Khaki">Location</th>
+   <th align="left" bgcolor="Khaki">Direction</th>
+   <th align="left" bgcolor="Khaki">Standard</th>
+   <th align="left" bgcolor="Khaki">GPIO Pin Index</th>
+</tr>
+<tr>
+   <td align="left">D5M_D[0]</td>
+   <td align="left">AJ27</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">16</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[1]</td>
+   <td align="left">AH27</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">15</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[2]</td>
+   <td align="left">AH24</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">14</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[3]</td>
+   <td align="left">AG26</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">13</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[4]</td>
+   <td align="left">AG25</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">10</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[5]</td>
+   <td align="left">AF26</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">9</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[6]</td>
+   <td align="left">AF25</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">8</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[7]</td>
+   <td align="left">AE24</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">7</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[8]</td>
+   <td align="left">AE23</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">6</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[9]</td>
+   <td align="left">AD24</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">5</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[10]</td>
+   <td align="left">AC23</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">4</td>
+</tr>
+<tr>
+   <td align="left">D5M_D[11]</td>
+   <td align="left">AA21</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">2</td>
+</tr>
+<tr>
+   <td align="left">D5M_FVAL</td>
+   <td align="left">AK24</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">25</td>
+</tr>
+<tr>
+   <td align="left">D5M_LVAL</td>
+   <td align="left">AJ24</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">24</td>
+</tr>
+<tr>
+   <td align="left">D5M_PIXCLK</td>
+   <td align="left">AB17</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">1</td>
+</tr>
+<tr>
+   <td align="left">D5M_RESET_N</td>
+   <td align="left">AJ26</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">20</td>
+</tr>
+<tr>
+   <td align="left">D5M_SCLK</td>
+   <td align="left">AK23</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">27</td>
+</tr>
+<tr>
+   <td align="left">D5M_SDATA</td>
+   <td align="left">AG23</td>
+   <td align="left">inout </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">26</td>
+</tr>
+<tr>
+   <td align="left">D5M_STROBE</td>
+   <td align="left">AJ25</td>
+   <td align="left">input </td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">23</td>
+</tr>
+<tr>
+   <td align="left">D5M_TRIGGER</td>
+   <td align="left">AH25</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">22</td>
+</tr>
+<tr>
+   <td align="left">D5M_XCLKIN</td>
+   <td align="left">AK27</td>
+   <td align="left">output</td>
+   <td align="left">3.3-V LVTTL</td>
+   <td align="left">19</td>
+</tr>
+</table>
+</html>
+</body>

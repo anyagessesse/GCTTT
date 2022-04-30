@@ -1,0 +1,159 @@
+#============================================================
+# Build by Terasic System Builder
+#============================================================
+
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSEMA5F31C6
+set_global_assignment -name TOP_LEVEL_ENTITY "IPU_Test"
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION "15.1.0"
+set_global_assignment -name LAST_QUARTUS_VERSION "21.1.0 Lite Edition"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "14:04:17 APRIL 30,2022"
+set_global_assignment -name DEVICE_FILTER_PACKAGE FBGA
+set_global_assignment -name DEVICE_FILTER_PIN_COUNT 896
+set_global_assignment -name DEVICE_FILTER_SPEED_GRADE 6
+
+#============================================================
+# CLOCK
+#============================================================
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK2_50
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK3_50
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK4_50
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK_50
+set_location_assignment PIN_AA16 -to CLOCK2_50
+set_location_assignment PIN_Y26 -to CLOCK3_50
+set_location_assignment PIN_K14 -to CLOCK4_50
+set_location_assignment PIN_AF14 -to CLOCK_50
+
+#============================================================
+# KEY
+#============================================================
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[3]
+set_location_assignment PIN_AA14 -to KEY[0]
+set_location_assignment PIN_AA15 -to KEY[1]
+set_location_assignment PIN_W15 -to KEY[2]
+set_location_assignment PIN_Y16 -to KEY[3]
+
+#============================================================
+# LED
+#============================================================
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[4]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[5]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[6]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[7]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[8]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[9]
+set_location_assignment PIN_V16 -to LEDR[0]
+set_location_assignment PIN_W16 -to LEDR[1]
+set_location_assignment PIN_V17 -to LEDR[2]
+set_location_assignment PIN_V18 -to LEDR[3]
+set_location_assignment PIN_W17 -to LEDR[4]
+set_location_assignment PIN_W19 -to LEDR[5]
+set_location_assignment PIN_Y19 -to LEDR[6]
+set_location_assignment PIN_W20 -to LEDR[7]
+set_location_assignment PIN_W21 -to LEDR[8]
+set_location_assignment PIN_Y21 -to LEDR[9]
+
+#============================================================
+# SW
+#============================================================
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[4]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[5]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[6]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[7]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[8]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[9]
+set_location_assignment PIN_AB12 -to SW[0]
+set_location_assignment PIN_AC12 -to SW[1]
+set_location_assignment PIN_AF9 -to SW[2]
+set_location_assignment PIN_AF10 -to SW[3]
+set_location_assignment PIN_AD11 -to SW[4]
+set_location_assignment PIN_AD12 -to SW[5]
+set_location_assignment PIN_AE11 -to SW[6]
+set_location_assignment PIN_AC9 -to SW[7]
+set_location_assignment PIN_AD10 -to SW[8]
+set_location_assignment PIN_AE12 -to SW[9]
+
+#============================================================
+# GPIO_1, GPIO_1 connect to D5M - 5M Pixel Camera
+#============================================================
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[4]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[5]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[6]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[7]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[8]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[9]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[10]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_D[11]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_FVAL
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_LVAL
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_PIXCLK
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_RESET_N
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_SCLK
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_SDATA
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_STROBE
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_TRIGGER
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to D5M_XCLKIN
+set_location_assignment PIN_AJ27 -to D5M_D[0]
+set_location_assignment PIN_AH27 -to D5M_D[1]
+set_location_assignment PIN_AH24 -to D5M_D[2]
+set_location_assignment PIN_AG26 -to D5M_D[3]
+set_location_assignment PIN_AG25 -to D5M_D[4]
+set_location_assignment PIN_AF26 -to D5M_D[5]
+set_location_assignment PIN_AF25 -to D5M_D[6]
+set_location_assignment PIN_AE24 -to D5M_D[7]
+set_location_assignment PIN_AE23 -to D5M_D[8]
+set_location_assignment PIN_AD24 -to D5M_D[9]
+set_location_assignment PIN_AC23 -to D5M_D[10]
+set_location_assignment PIN_AA21 -to D5M_D[11]
+set_location_assignment PIN_AK24 -to D5M_FVAL
+set_location_assignment PIN_AJ24 -to D5M_LVAL
+set_location_assignment PIN_AB17 -to D5M_PIXCLK
+set_location_assignment PIN_AJ26 -to D5M_RESET_N
+set_location_assignment PIN_AK23 -to D5M_SCLK
+set_location_assignment PIN_AG23 -to D5M_SDATA
+set_location_assignment PIN_AJ25 -to D5M_STROBE
+set_location_assignment PIN_AH25 -to D5M_TRIGGER
+set_location_assignment PIN_AK27 -to D5M_XCLKIN
+
+#============================================================
+# End of pin assignments by Terasic System Builder
+#============================================================
+
+
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VERILOG_FILE v/Line_Buffer1.v
+set_global_assignment -name QIP_FILE v/Line_Buffer1.qip
+set_global_assignment -name VERILOG_FILE v/imgdetect.v
+set_global_assignment -name VERILOG_FILE v/IPU.v
+set_global_assignment -name VERILOG_FILE v/Reset_Delay.v
+set_global_assignment -name VERILOG_FILE v/I2C_Controller.v
+set_global_assignment -name VERILOG_FILE v/I2C_CCD_Config.v
+set_global_assignment -name VERILOG_FILE v/CCD_Capture.v
+set_global_assignment -name SDC_FILE IPU_Test.SDC
+set_global_assignment -name VERILOG_FILE v/sdram_pll.v -library sdram_pll
+set_global_assignment -name QIP_FILE v/sdram_pll.qip
+set_global_assignment -name SIP_FILE v/sdram_pll.sip
+set_global_assignment -name VERILOG_FILE v/sdram_pll/sdram_pll_0002.v -library sdram_pll
+set_global_assignment -name QIP_FILE v/sdram_pll/sdram_pll_0002.qip -library sdram_pll
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
