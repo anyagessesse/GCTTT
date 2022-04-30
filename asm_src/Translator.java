@@ -430,17 +430,16 @@ public class Translator {
 			}
 			// MEMORY //////////////////////////////////////////////////////////
 			else if(name.contentEquals(SP.name)) {
-				// SP Rd, Rs, imm6
-				// <oooo><ddd><sss><iii iii>
-				// extract registers
+				// SP Rd, imm8
+				// <oooo><ddd><x><ii iii iii>
+				// extract register
 				rd = getRegBinary(tokens[2].replace(",",""), lineNum);
-				rs = getRegBinary(tokens[3].replace(",",""), lineNum);
 				
 				// get immediate
-				imm = getOffsetBinary(tokens[4].replace(",",""), lineNum);
+				imm = getImmBinary(tokens[3].replace(",",""), 0, 7, lineNum);
 				
 				// compose binary
-				str = SP.opcode+rd+rs+imm;
+				str = SP.opcode+rd+"0"+imm;
 				o.add(str);
 				if(debug) { System.out.println(TAB+str); }
 			}
@@ -1062,17 +1061,16 @@ public class Translator {
 		}
 		// MEMORY //////////////////////////////////////////////////////////
 		else if(opcode.contentEquals(SP.opcode)) {
-			// SP Rd, Rs, imm6
-			// <oooo><ddd><sss><iii iii>
+			// SP Rd, imm8
+			// <oooo><ddd><x><ii iii iii>
 			// extract registers
 			rd = getRegAsm(binary.substring(4, 7), lineNum);
-			rs = getRegAsm(binary.substring(7, 10), lineNum);
 						
 			// get immediate
-			imm = getOffsetAsm(binary.substring(10, 16), lineNum);
+			imm = getImmAsm(binary.substring(8, 16), lineNum);
 						
 			// compose assembly
-			str = SP.name+" "+rd+", "+rs+", "+imm;
+			str = SP.name+" "+rd+", "+imm;
 			rsm.add(str);
 			if(debug) { System.out.println(TAB+str); }
 		}
@@ -1083,7 +1081,7 @@ public class Translator {
 			rd = getRegAsm(binary.substring(4, 7), lineNum);
 						
 			// get immediate
-			imm = getOffsetAsm(binary.substring(8, 16), lineNum);
+			imm = getImmAsm(binary.substring(8, 16), lineNum);
 						
 			// compose assembly
 			str = LD.name+" "+rd+", "+imm;
@@ -1097,7 +1095,7 @@ public class Translator {
 			rd = getRegAsm(binary.substring(4, 7), lineNum);
 						
 			// get immediate
-			imm = getOffsetAsm(binary.substring(8, 16), lineNum);
+			imm = getImmAsm(binary.substring(8, 16), lineNum);
 						
 			// compose assembly
 			str = ST.name+" "+rd+", "+imm;
