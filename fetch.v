@@ -35,7 +35,7 @@ module fetch(clk, rst,newPC,instr,PC,PCPlus1,halt,jorb,haltPC,ldStallPC,ldStall,
 	dflop DFF0[15:0](.q(PC), .d(nextPC), .clk(clk), .rst(rst));
 
         //store old pc when jumping to interrupt
-        pcreg PCREG(.clk(clk),.rst(rst),.write_en(ipu_int),.pc_in(PCPlus1),.pc_out(storedPC));
+        pcreg PCREG(.clk(clk),.rst(rst),.write_en(ipu_int),.pc_in(PC),.pc_out(storedPC));
         //indicate that interrupt has been recieved
         dflop DFF1(.q(int_ack),.d(ipu_int),.clk(clk),.rst(rst));
 
