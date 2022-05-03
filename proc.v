@@ -47,6 +47,7 @@ wire [15:0]stall_inst;
 wire DEC_read_coord, EX_read_coord, MEM_read_coord, WB_read_coord, read_coord;
 wire [3:0]EX_grid_coord, MEM_grid_coord, WB_grid_coord;
 wire [31:0]FinalRegWriteData;
+wire interrupt;
 //instantiate modules
 /*
  * FETCH
@@ -54,13 +55,13 @@ wire [31:0]FinalRegWriteData;
  * outputs: instr, PC, PCPlus1
  */
 fetch FETCH0(.clk(clk),.rst(rst),.newPC(EX_PC_out),.instr(FETCH_inst),.PC(FETCH_PC_out),.PCPlus1(FETCH_PCPlus1),.halt(WB_halt),.jorb(selectJorB),
-		.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in), .ipu_int(ipu_int), .int_ack(int_ack));
+		.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in), .ipu_int(ipu_int), .int_ack(int_ack), .int_output(interrupt));
 
-dflop DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt|ipu_int));
-assign fd_inst = (rst | EX_flush|ipu_int) ? 16'h1000 : WB_halt|EX_halt ? 16'h0000 :  ldStall ? DEC_inst_in : FETCH_inst;
+dflop DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt|interrupt));
+assign fd_inst = (rst | EX_flush|interrupt) ? 16'h1000 : WB_halt|EX_halt ? 16'h0000 :  ldStall ? DEC_inst_in : FETCH_inst;
 dflop DFF1[15:0](.q(DEC_inst_in), .d(fd_inst), .clk(clk), .rst(1'b0));
-dflop DFF2[15:0](.q(DEC_PCPlus1), .d(FETCH_PCPlus1), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt|ldStall|ipu_int));
-
+dflop DFF2[15:0](.q(DEC_PCPlus1), .d(FETCH_PCPlus1), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt|ldStall|interrupt));
+		
 /* 
  * DECODE
  * inputs: PC_fetch, PCPlus1, inst_fetch
