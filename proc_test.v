@@ -24,17 +24,9 @@ assign grid_coord_in = grid_coord_out;
 initial begin
 	clk = 0;
 	rst = 1'b1;
-	assign write_en = 1'b1;
 	assign ipu_int = 1'b0;
-	assign coord_in = 4'b0110;
 	@(posedge clk) 
 	rst = 1'b0;
-	@(posedge clk)
-	assign write_en = 1'b0;
-	repeat(10) @(posedge clk);
-	assign ipu_int = 1'b1;
-	@(posedge clk)
-	assign ipu_int = 1'b0;
 	repeat(40) @(posedge clk);
 	$stop;
 end

@@ -47,6 +47,9 @@ wire [15:0]stall_inst;
 wire DEC_read_coord, EX_read_coord, MEM_read_coord, WB_read_coord, read_coord;
 wire [3:0]EX_grid_coord, MEM_grid_coord, WB_grid_coord;
 wire [31:0]FinalRegWriteData;
+wire interrupt;
+wire DEC_pixel_en, EX_pixel_en, pixel_en_mid;
+wire DEC_pixel_val, EX_pixel_val, pixel_val_mid;
 //instantiate modules
 /*
  * FETCH
@@ -54,13 +57,16 @@ wire [31:0]FinalRegWriteData;
  * outputs: instr, PC, PCPlus1
  */
 fetch FETCH0(.clk(clk),.rst(rst),.newPC(EX_PC_out),.instr(FETCH_inst),.PC(FETCH_PC_out),.PCPlus1(FETCH_PCPlus1),.halt(WB_halt),.jorb(selectJorB),
-		.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in), .ipu_int(ipu_int), .int_ack(int_ack),.int_done(WB_int_done));
+		.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in), .ipu_int(ipu_int), .int_ack(int_ack), .int_output(interrupt),.leds());
 
-dflop DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt));
-assign fd_inst = (rst | EX_flush) ? 16'h1000 : WB_halt|EX_halt ? 16'h0000 :  ldStall ? DEC_inst_in : FETCH_inst;
+		
+//assign leds[9:4] = FETCH_PC_out;
+		
+dflop DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst | EX_flush|EX_halt|interrupt));
+assign fd_inst = (rst | EX_flush|interrupt) ? 16'h1000 : EX_halt ? 16'h0000 :  ldStall ? DEC_inst_in : FETCH_inst;
 dflop DFF1[15:0](.q(DEC_inst_in), .d(fd_inst), .clk(clk), .rst(1'b0));
-dflop DFF2[15:0](.q(DEC_PCPlus1), .d(FETCH_PCPlus1), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt|ldStall));
-
+dflop DFF2[15:0](.q(DEC_PCPlus1), .d(FETCH_PCPlus1), .clk(clk), .rst(rst | EX_flush|EX_halt|ldStall|interrupt));
+		
 /* 
  * DECODE
  * inputs: PC_fetch, PCPlus1, inst_fetch
@@ -75,8 +81,8 @@ decode ID0(.clk(clk), .rst(rst), .PC(DEC_PC_in), .PCPlus1(DEC_PCPlus1), .inst(DE
 		 .MemWrite(DEC_MemWrite), .MemRead(DEC_MemRead), .halt(DEC_halt),
 		 .reg1_data(DEC_reg1_data), .reg2_data(DEC_reg2_data), .write_reg_out(DEC_write_reg),
 		 .write_en_out(DEC_write_en), .write_en_in(WB_write_en), .write_reg_in(WB_write_reg), .write_data(FinalRegWriteData),
-		 .RqRd(DEC_RqRd),.Rs(DEC_Rs), .leds(leds), .sw(sw), .pixel_en(pixel_en), .pixel_value(pixel_value), 
-                 .pixel_addr(pixel_addr),.read_coord(DEC_read_coord));
+		 .RqRd(DEC_RqRd),.Rs(DEC_Rs), .leds(leds), .sw(sw), .pixel_en(DEC_pixel_en), .pixel_value(DEC_pixel_val), 
+                 .read_coord(DEC_read_coord));
 
 assign ldStall = EX_MemRead & (EX_write_reg == DEC_Rs | EX_write_reg == DEC_RqRd) ? 1 : 0;
 
@@ -89,6 +95,8 @@ assign halt1 = ldStall? 1'b0 : DEC_halt;
 assign writeen = ldStall? 1'b0 : DEC_write_en;
 assign stall_inst = ldStall ? EX_inst_in : DEC_inst_out;
 assign read_coord = ldStall ? 1'b0 : DEC_read_coord;
+assign pixel_en_mid = ldStall ? 1'b0: DEC_pixel_en;
+assign pixel_val_mid = ldStall ? 1'b0 : DEC_pixel_val;
 
 dflop DFF50(.q(nxt_stall), .d(ldStall), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 dflop DFF3[15:0](.q(EX_PC_in), .d(DEC_PC_out), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
@@ -112,7 +120,8 @@ dflop DFF44[2:0](.q(EX_Rs), .d(DEC_Rs), .clk(clk), .rst(rst | MEM_flush|WB_halt|
 dflop DFF57[3:0](.q(EX_grid_coord), .d(grid_coord), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 dflop DFF58(.q(EX_read_coord), .d(read_coord), .clk(clk), .rst(rst | MEM_flush|WB_halt|MEM_halt));
 
-
+dflop DFF65(.q(EX_pixel_en),.d(pixel_en_mid),.clk(clk),.rst(rst | MEM_flush|WB_halt|MEM_halt));
+dflop DFF66(.q(EX_pixel_val),.d(pixel_val_mid),.clk(clk),.rst(rst | MEM_flush|WB_halt|MEM_halt));
 /*
  * EXECUTE
  * inputs: PCIn, RqRd, Rs, instr, JumpOrBranchHigh, RqRdOrImm, RsOrImm,
@@ -120,6 +129,9 @@ dflop DFF58(.q(EX_read_coord), .d(read_coord), .clk(clk), .rst(rst | MEM_flush|W
  * outputs: PC_ex, flush, reg1_out, ALUOut
  */
 
+assign pixel_en = EX_pixel_en;
+assign pixel_val = EX_pixel_val;
+assign pixel_addr = MEM_RegData;
 
 ALUForward ALUF0(.WB_RdData_in(FinalRegWriteData),.MEM_RdData_in(MEM_RegData),.RqRdData(EX_reg1_data),.RsData(EX_reg2_data),.WB_Rd_in(WB_inst_in[11:9]),.MEM_Rd_in(MEM_inst_in[11:9]),.RqRd(EX_RqRd),.Rs(EX_Rs),.PrevWriteEn(MEM_write_en),.PrevPrevWriteEn(WB_write_en),.PrevMemRead(MEM_MemRead),.PrevPrevMemRead(WB_MemRead),.fRqRdData(fRqRdData),.fRsData(fRsData));
 
@@ -128,7 +140,6 @@ execute EX0(.PCIn(EX_PC_in),.RqRd(fRqRdData),.Rs(fRsData),
 		.instr(EX_inst_in),.BranchHigh(EX_BranchHigh), .JumpHigh(EX_JumpHigh),
 		.RqRdOrImm(EX_RqRdOrImm),.RsOrImm(EX_RsOrImm),.ALUCtrl(EX_ALUCtrl),
 		.PCOut(EX_PC_out),.flush(EX_flush),.ALUOut(EX_ALU_out),.SelectJOrB(selectJorB));
-
 
 
 dflop DFF16[15:0](.q(MEM_PC_in), .d(EX_PC_out), .clk(clk), .rst(rst|WB_halt));
@@ -144,8 +155,8 @@ dflop DFF33(.q(MEM_halt), .d(EX_halt), .clk(clk), .rst(rst|WB_halt));
 dflop DFF40[15:0](.q(MEM_inst_in), .d(EX_inst_in), .clk(clk), .rst(rst|WB_halt));
 
 //read coord from special reg
-dff DFF59[3:0](.q(MEM_grid_coord), .d(EX_grid_coord), .clk(clk), .rst(rst|WB_halt));
-dff DFFF60(.q(MEM_read_coord), .d(EX_read_coord), .clk(clk), .rst(rst|WB_halt));
+dflop DFF59[3:0](.q(MEM_grid_coord), .d(EX_grid_coord), .clk(clk), .rst(rst|WB_halt));
+dflop DFFF60(.q(MEM_read_coord), .d(EX_read_coord), .clk(clk), .rst(rst|WB_halt));
 
 
 /*

@@ -2,7 +2,7 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
 		 RqRdOrImm, RsOrImm, ALUCtrl, MemWrite, MemRead, halt,
 		 reg1_data, reg2_data, write_reg_out, write_en_out,
 		 write_reg_in, write_en_in, write_data,RqRd,Rs,leds, sw, pixel_en,
-		 pixel_addr, pixel_value, read_coord);
+		 pixel_value, read_coord);
 
       input [15:0]PC, PCPlus1; 
       input [15:0]inst;  
@@ -74,7 +74,7 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
       assign PCOut = (inst[15:12] == 4'b0000) ? PC : PCPlus1;
 
       // select rd or rq register, pass register numbers to rf
-      assign RqRd = (inst[14] | read_coord) ? inst[11:9] : inst[5:3];
+      assign RqRd = inst[14] ? inst[11:9] : inst[5:3];
       assign Rs = inst[8:6];
 
   

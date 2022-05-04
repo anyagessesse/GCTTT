@@ -2,7 +2,7 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
 		 RqRdOrImm, RsOrImm, ALUCtrl, MemWrite, MemRead, halt,
 		 reg1_data, reg2_data, write_reg_out, write_en_out,
 		 write_reg_in, write_en_in, write_data,RqRd,Rs,leds, sw, pixel_en,
-		 pixel_addr, pixel_value, read_coord);
+		 pixel_value, read_coord);
 
       input [15:0]PC, PCPlus1; 
       input [15:0]inst;  
@@ -30,7 +30,6 @@ module decode(clk, rst, PC, PCPlus1, inst, PCOut, inst_out, BranchHigh, JumpHigh
       output write_en_out;
       output [2:0]RqRd, Rs;
       output pixel_en, pixel_value;
-      output [31:0]pixel_addr;
       output read_coord;
 
       reg [3:0]ALUIn;
