@@ -55,12 +55,15 @@ wire interrupt;
  * outputs: instr, PC, PCPlus1
  */
 fetch FETCH0(.clk(clk),.rst(rst),.newPC(EX_PC_out),.instr(FETCH_inst),.PC(FETCH_PC_out),.PCPlus1(FETCH_PCPlus1),.halt(WB_halt),.jorb(selectJorB),
-		.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in), .ipu_int(ipu_int), .int_ack(int_ack), .int_output(interrupt));
+		.haltPC(WB_PC_in),.ldStall(ldStall),.ldStallPC(DEC_PC_in), .ipu_int(ipu_int), .int_ack(int_ack), .int_output(interrupt),.leds());
 
-dflop DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt|interrupt));
-assign fd_inst = (rst | EX_flush|interrupt) ? 16'h1000 : WB_halt|EX_halt ? 16'h0000 :  ldStall ? DEC_inst_in : FETCH_inst;
+		
+//assign leds[9:4] = FETCH_PC_out;
+		
+dflop DFF0[15:0](.q(DEC_PC_in), .d(FETCH_PC_out), .clk(clk), .rst(rst | EX_flush|EX_halt|interrupt));
+assign fd_inst = (rst | EX_flush|interrupt) ? 16'h1000 : EX_halt ? 16'h0000 :  ldStall ? DEC_inst_in : FETCH_inst;
 dflop DFF1[15:0](.q(DEC_inst_in), .d(fd_inst), .clk(clk), .rst(1'b0));
-dflop DFF2[15:0](.q(DEC_PCPlus1), .d(FETCH_PCPlus1), .clk(clk), .rst(rst | EX_flush|WB_halt|EX_halt|ldStall|interrupt));
+dflop DFF2[15:0](.q(DEC_PCPlus1), .d(FETCH_PCPlus1), .clk(clk), .rst(rst | EX_flush|EX_halt|ldStall|interrupt));
 		
 /* 
  * DECODE
@@ -145,8 +148,8 @@ dflop DFF33(.q(MEM_halt), .d(EX_halt), .clk(clk), .rst(rst|WB_halt));
 dflop DFF40[15:0](.q(MEM_inst_in), .d(EX_inst_in), .clk(clk), .rst(rst|WB_halt));
 
 //read coord from special reg
-dff DFF59[3:0](.q(MEM_grid_coord), .d(EX_grid_coord), .clk(clk), .rst(rst|WB_halt));
-dff DFFF60(.q(MEM_read_coord), .d(EX_read_coord), .clk(clk), .rst(rst|WB_halt));
+dflop DFF59[3:0](.q(MEM_grid_coord), .d(EX_grid_coord), .clk(clk), .rst(rst|WB_halt));
+dflop DFFF60(.q(MEM_read_coord), .d(EX_read_coord), .clk(clk), .rst(rst|WB_halt));
 
 
 /*
