@@ -3,7 +3,7 @@ module rf(clk, rst, read1_reg, read2_reg, write_reg, write_data, write_en, read1
   input [2:0]read1_reg, read2_reg, write_reg;
   input [31:0]write_data;
   input write_en, clk, rst;
-  output [9:0]leds;
+  output [3:0]leds;
   input [1:0] sw;
   
   output [31:0]read1_data, read2_data;
