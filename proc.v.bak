@@ -130,7 +130,7 @@ dflop DFF66(.q(EX_pixel_val),.d(pixel_val_mid),.clk(clk),.rst(rst | MEM_flush|WB
  */
 
 assign pixel_en = EX_pixel_en;
-assign pixel_val = EX_pixel_val;
+assign pixel_value = EX_pixel_val;
 assign pixel_addr = MEM_RegData;
 
 ALUForward ALUF0(.WB_RdData_in(FinalRegWriteData),.MEM_RdData_in(MEM_RegData),.RqRdData(EX_reg1_data),.RsData(EX_reg2_data),.WB_Rd_in(WB_inst_in[11:9]),.MEM_Rd_in(MEM_inst_in[11:9]),.RqRd(EX_RqRd),.Rs(EX_Rs),.PrevWriteEn(MEM_write_en),.PrevPrevWriteEn(WB_write_en),.PrevMemRead(MEM_MemRead),.PrevPrevMemRead(WB_MemRead),.fRqRdData(fRqRdData),.fRsData(fRsData));

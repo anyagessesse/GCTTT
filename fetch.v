@@ -72,7 +72,7 @@ module fetch(clk, rst,newPC,instr,PC,PCPlus1,halt,jorb,haltPC,ldStallPC,ldStall,
 			jorb_wait <= 1'b0;
 		else if (jorb) 
 			jorb_wait <= 1'b0;
-		else if (jorb_in)
+		else if (jorb_in & ~int_output)
 			jorb_wait <= 1'b1;
 	end
 
