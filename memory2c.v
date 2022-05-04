@@ -68,7 +68,7 @@ module memory2c (data_out, data_in, addr, enable, wr, createdump, clk, rst);
       if (rst) begin
          // first init to 0, then load loadfile_all.img
          if (!loaded) begin
-            $readmemb("spfwd_test.o", mem);
+            $readmemb("atom.o", mem);
             loaded = 1;
          end
       end

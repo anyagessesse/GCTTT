@@ -27,6 +27,11 @@ initial begin
 	assign ipu_int = 1'b0;
 	@(posedge clk) 
 	rst = 1'b0;
+	repeat(8) @(posedge clk);
+	assign ipu_int = 1'b1;
+	assign grid_coord_in = 4'b0010;
+	@(posedge clk);
+	assign ipu_int = 1'b0;
 	repeat(40) @(posedge clk);
 	$stop;
 end

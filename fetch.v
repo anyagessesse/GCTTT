@@ -21,18 +21,26 @@ module fetch(clk, rst,newPC,instr,PC,PCPlus1,halt,jorb,haltPC,ldStallPC,ldStall,
    wire [15:0]storedPC;
    wire int_done;
 	reg int_in_progress;
+	wire jorb_in;
+	reg jorb_wait;
+	wire hold_PC;
 
 
 	// decide next pc value
         assign nextPC = int_done ? storedPC : //get old pc after interrupt
 								int_output ? 16'h0005 : //set PC to location of interrupt handler   
 								jorb ? newPC :
-		                  (instr[15:12] == 4'h0) ? PC :
+		                  hold_PC ? PC :
 								ldStall ? PC : PCPlus1;
 
 
         assign int_done = instr[15:12] == 4'b0011;
 	assign int_output = int_in_progress ? 1'b0 : ipu_int;
+
+	assign jorb_in = instr[15:12] == 4'b0100;
+	
+	assign hold_PC = instr[15:12] == 4'b0000 | jorb_wait | jorb_in;
+	
 
 	// dff to hold PC value
 	dflop DFF0[15:0](.q(PC), .d(nextPC), .clk(clk), .rst(rst));
@@ -57,6 +65,15 @@ module fetch(clk, rst,newPC,instr,PC,PCPlus1,halt,jorb,haltPC,ldStallPC,ldStall,
 			int_in_progress <= 1'b0;
 		else if (ipu_int) 
 			int_in_progress <= 1'b1;
+	end
+
+	always @(posedge clk, posedge rst) begin
+		if (rst)
+			jorb_wait <= 1'b0;
+		else if (jorb) 
+			jorb_wait <= 1'b0;
+		else if (jorb_in)
+			jorb_wait <= 1'b1;
 	end
 
 
